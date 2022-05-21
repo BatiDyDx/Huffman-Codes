@@ -9,11 +9,18 @@ MAIN = src/main
 COMPRESSOR = src/comp
 DECOMPRESSOR = src/decomp
 IO = src/io
+BTREE = structures/btree
+GLIST = structures/glist
+SGLIST = structures/sglist
+
+SOURCE = $(COMPRESSOR).o $(DECOMPRESSOR).o $(IO).o
+STRUCTURES = $(BTREE).o $(GLIST).o $(SGLIST).o
+TESTS = tests/main.c tests/test_comp.c tests/test_decomp.c
 
 # Build the programme
 # If DEBUG flag is set, it compiles
 # with the debugging flags
-all: $(MAIN).o $(COMPRESSOR).o $(DECOMPRESSOR).o $(IO).o
+all: $(MAIN).o $(SOURCE) $(STRUCTURES)
 ifdef DEBUG
 	$(CC) -g $(FLAGS) -o huff $^
 else	
@@ -24,8 +31,13 @@ endif
 %.o: %.c
 	$(CC) -c $(FLAGS) $^ -o $@
 
+tests: $(SOURCE) $(STRUCTURES)
+	$(CC) $(FLAGS) -o huff_test $^ $(TESTS)
+
 
 # Clean .o files and debug folder
 .PHONY: clean
 clean:
-	rm -r *.dSYM *.o
+	-rm -r *.dSYM
+	-rm src/*.o structures/*.o
+	-rm huff huff_test

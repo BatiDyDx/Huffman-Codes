@@ -41,14 +41,14 @@ int sglist_search(SGList list, void *data, CompareFunction cmp) {
         if (cmp_flag == 0)
             return 1;
         else if (cmp_flag > 0)
-            break;
+            return 0;
     }
     return 0;
 }
 
 SGList sglist_from_array(void **arr, size_t len, CopyFunction copy, CompareFunction cmp) {
     SGList list = sglist_init();
-    for (int i = 0; i < len; i++)
+    for (size_t i = 0; i < len; i++)
         list = sglist_insert(list, arr[i], copy, cmp);
     return list;
 }

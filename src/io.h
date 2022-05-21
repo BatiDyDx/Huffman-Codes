@@ -32,7 +32,7 @@ char* implode(char* bits, int len, int* nlen);
 char* explode(char* buf, int len, int* nlen);
 
 /*
- *  Prints the usage message of the programme to stdout
+ *  Prints the usage message of the programme to stdout and exits
  */
 void usage(void);
 

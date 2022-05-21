@@ -1,20 +1,29 @@
 #include "comp.h"
 #include "decomp.h"
 #include "io.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
-int main(int argc, const char* const argv[]) {
+int main(int argc, const char* argv[]) {
+  // If argument count is incorrect, or second argument
+  // is not a C or D, print usage and exit
+  
+  const char *cmd, *path;
 
-    // If argument count is incorrect, or second argument
-    // is not a C or D, print usage and exit
-    if (argc != 3 || (argv[1] != 'C' && argv[1] != 'D')) {
-        usage();
-        exit(1);
-    }
+  if (argc != 3)
+    usage();
 
-    // Call corresponding compressing or decompressing functions
+  cmd = argv[1];
+  path = argv[2];
+  // Call corresponding compressing or decompressing functions
+  if (strcmp(cmd, "C") == 0) { // Compress
+    compress(path);
+    printf("Compression succeeded");
+  } else if (strcmp(cmd, "D") == 0) {
+    decompress(path);
+    printf("Decompression succeeded");
+  } else
+    usage();
 
-
-    return 0;
+  return 0;
 }

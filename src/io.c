@@ -4,20 +4,16 @@
 #include <limits.h>
 #include <assert.h>
 
-static inline void 
-quit(const char *s)
-{
+static inline void quit(const char* s) {
 	perror(s);
 	exit(1);
 }
 
-char           *
-readfile(const char *path, int *len)
-{
-	int		sz = 1024;
-	char           *buf = malloc(sz);
-	FILE           *f = fopen(path, "rb");
-	int		c         , i = 0;
+char* readfile(const char* path, int* len) {
+	int sz = 1024;
+	char* buf = malloc(sz);
+	FILE* f = fopen(path, "rb");
+	int c, i = 0;
 
 	if (f == NULL)
 		quit("readfile.fopen");
@@ -36,11 +32,9 @@ readfile(const char *path, int *len)
 	return buf;
 }
 
-void 
-writefile(const char *path, char *buf, int len)
-{
-	FILE           *f = fopen(path, "wb");
-	int		i;
+void writefile(const char* path, char* buf, int len) {
+	FILE* f = fopen(path, "wb");
+	int i;
 
 	if (f == NULL)
 		quit("writefile.fopen");
@@ -51,31 +45,25 @@ writefile(const char *path, char *buf, int len)
 	fclose(f);
 }
 
-static char 
-charbit(int i)
-{
+static char charbit(int i) {
 	if (i)
 		return '1';
 	else
 		return '0';
 }
 
-static inline int 
-div_up(int m, int n)
-{
+static inline int __attribute__((unused))div_up(int m, int n) {
 	return (m + (n - 1)) / n;
 }
 
-char           *
-implode(char *bits, int len, int *nlen)
-{
-	int		i         , j;
+char* implode(char* bits, int len, int* nlen) {
+	int i, j;
 
 	/*
 	 * Buffer de retorno, con longitud len/8 más un byte extra (por
 	 * padding).
 	 */
-	char           *buf = malloc(len / CHAR_BIT + 1);
+	char* buf = malloc(len / CHAR_BIT + 1);
 	*nlen = len / CHAR_BIT + 1;
 
 	/*
@@ -83,8 +71,8 @@ implode(char *bits, int len, int *nlen)
 	 * [buf].
 	 */
 	for (i = 0, j = 0; i < (len & ~7); j++) {
-		char		c = 0;
-		int		k;
+		char c = 0;
+		int k;
 		for (k = 0; k < CHAR_BIT; k++)
 			c = (c << 1) | (bits[i++] == '1');
 		buf[j] = c;
@@ -96,9 +84,9 @@ implode(char *bits, int len, int *nlen)
 	 */
 	{
 		/* Nota: [i] contiene la próxima posición de [bits] a leer */
-		int		k;
-		char		c = 0;
-		int		n_left = len - i;
+		int k;
+		char c = 0;
+		int n_left = len - i;
 		/* Los bits que faltaban de [bits] */
 		for (k = 0; k < n_left; k++)
 			c = (c << 1) | (bits[i++] == '1');
@@ -114,15 +102,13 @@ implode(char *bits, int len, int *nlen)
 	return buf;
 }
 
-char           *
-explode(char *buf, int len, int *nlen)
-{
-	int		i         , j;
-	char           *bits = malloc(len * CHAR_BIT);
+char* explode(char* buf, int len, int* nlen) {
+	int i, j;
+	char* bits = malloc(len * CHAR_BIT);
 
 	/* Para cada char en [buf], escribimos 8 bits en el arreglo */
 	for (i = 0, j = 0; i < len; i++) {
-		int		k;
+		int k;
 		for (k = CHAR_BIT - 1; k >= 0; k--)
 			bits[j++] = charbit(buf[i] & (1 << k));
 	}
@@ -143,11 +129,11 @@ explode(char *buf, int len, int *nlen)
 	return bits;
 }
 
-void 
-usage(void)
-{
+void usage(void) {
 	puts("Usage:");
 	puts("To compress text in file f.txt:");
 	puts("huff C f.txt");
 	puts("To decompress from a file f.txt.hf, with the corresponding huffman tree in file f.txt.tree:");
 	puts("huff D f.txt.hf f.txt.tree");
+	exit(EXIT_FAILURE);
+}

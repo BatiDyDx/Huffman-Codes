@@ -71,56 +71,6 @@ void* id(void* x) {
 */
 void null(__attribute__((unused)) void* x) { return; }
 
-void btree_preorder_iter(BTree tree, void (*visit)(int data)) {
-
-	GStack stack = gstack_init();
-
-	if (btree_empty(tree))
-		return;
-
-	while (1) {
-		visit(tree->data);
-		
-		if (tree->right != NULL)
-			stack = gstack_push(stack, tree->right, (CopyFunction)id);
-		if (tree->left != NULL)
-			stack = gstack_push(stack, tree->left, (CopyFunction)id);
-
-		if (gstack_empty(stack))
-			break;
-
-		tree = (BTree)gstack_top(stack, (CopyFunction)id);
-		stack = gstack_pop(stack, (DestroyFunction)null);
-	}
-
-	// Although it is supposed to be empty,
-	// it is a good practica to free the stack anyways
-	gstack_free(stack, (DestroyFunction)null);
-}
-
-void btree_visit_bfs_iter(BTree tree, void (*visit)(int data)) {
-	GQueue queue = gqueue_init();
-
-	if (btree_empty(tree))
-		return;
-
-	do {
-		visit(tree->data);
-		if (!btree_empty(tree->left))
-			gqueue_push(queue, tree->left, (CopyFunction)id);
-		if (!btree_empty(tree->right))
-			gqueue_push(queue, tree->right, (CopyFunction)id);
-		if (gqueue_empty(queue))
-			break;
-		tree = (BTree) gqueue_start(queue, (CopyFunction)id);
-		gqueue_pop(queue, (DestroyFunction)null);
-	} while (1);
-
-	// Although it is supposed to be empty,
-	// it is a good practica to free the queue anyways
-	gqueue_free(queue, (DestroyFunction)null);
-}
-
 int btree_leaf(BTree tree) {
 	if (btree_empty(tree))
 		return -1;
