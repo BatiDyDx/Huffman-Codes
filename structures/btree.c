@@ -7,7 +7,7 @@
 #define MAX(X, Y) (X > Y ? X : Y)
 
 struct _BTNode {
-	int data;
+	void* data;
 	struct _BTNode *left;
 	struct _BTNode *right;
 };
@@ -15,17 +15,18 @@ struct _BTNode {
 
 BTree btree_init() { return NULL; }
 
-void btree_destroy(BTree tree) {
+void btree_destroy(BTree tree, DestroyFunction destroy) {
 	if (tree != NULL) {
-		btree_destroy(tree->left);
-		btree_destroy(tree->right);
+		btree_destroy(tree->left, destroy);
+		btree_destroy(tree->right, destroy);
+		destroy(tree->data);
 		free(tree);
 	}
 }
 
 int btree_empty(BTree tree) { return tree == NULL; }
 
-BTree btree_join(int data, BTree left, BTree right) {
+BTree btree_join(void* data, BTree left, BTree right) {
 	BTree new_node = malloc(sizeof(struct _BTNode));
 	assert(new_node != NULL);
 	new_node->data = data;
@@ -35,7 +36,7 @@ BTree btree_join(int data, BTree left, BTree right) {
 }
 
 void btree_visit(BTree tree, BTreeVisitOrder order,
-					void (*visit)(int data)) {
+					void (*visit)(void* data)) {
 	if (tree == NULL)
 		return;
 	if (order == BTREE_INORDER) {

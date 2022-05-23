@@ -7,8 +7,7 @@
 
 #define CHARS 256
 
-struct _CharFreq
-{
+struct _CharFreq {
     unsigned char c;
     size_t freq;
 };
