@@ -39,4 +39,16 @@ void sort_freq(CharFreq *freq_array, int len);
  */
 void compress(const char *filename);
 
+CharFreq* create_frequencies();
+
+void free_frequencies(CharFreq* frequencies);
+
+CharFreq* calculate_freq(char* file_content, int len);
+
+SGList create_nodes_from_array(CharFreq* frequencies);
+
+BTree create_huff_tree(CharFreq* frequencies);
+
+void compress(const char *filename);
+
 #endif /* __COMP_H__ */

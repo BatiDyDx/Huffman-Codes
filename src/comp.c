@@ -41,9 +41,32 @@ CharFreq* calculate_freq(char* file_content, int len) {
   return frequencies;
 }
 
-BTree create_huff_tree(CharFreq* __attribute__((unused))frequencies) {
-  // TODO: implement huffman tree creation algorithm
-  return NULL;
+SGList create_nodes_from_array(CharFreq* frequencies){
+  return frequencies;
+}
+
+BTree create_huff_tree(CharFreq* frequencies) {
+  SGList nodes = create_nodes_from_array(frequencies);
+  BTree huff_tree = btree_init();
+  while (nodes->next != NULL){
+    BTree tree1 = (BTree)nodes->data;
+    BTree tree2 = (BTree)nodes->next->data;
+    CharFreq new_freq = malloc(sizeof(struct _CharFreq));
+    assert(new_freq != NULL);
+    // creamos la nueva frecuencia, que es la suma de las dos frecuencias anteriores
+    new_freq->freq = ((CharFreq)(tree1->data))->freq + ((CharFreq)(tree2->data))->freq;
+    // new_freq->c se deja como basura, ya que no nos va a importar acceder a este
+    // a menos que sea una hoja.
+    huff_tree = btree_join(new_freq, tree1, tree2);
+    SGList temp = nodes->next->next;
+    free(nodes->next);
+    free(nodes);
+    nodes = temp;
+    nodes = sglist_insert(nodes, huff_tree, id, compare_nodes_freq);
+  }
+  huff_tree = nodes->data;
+  free(nodes);
+  return huff_tree;
 }
 
 void compress(const char *filename) {

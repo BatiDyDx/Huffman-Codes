@@ -7,6 +7,12 @@ typedef enum {
     BTREE_POSTORDER
 } BTreeVisitOrder;
 
+struct _BTNode {
+	void* data;
+	struct _BTNode *left;
+	struct _BTNode *right;
+};
+
 typedef struct _BTNode *BTree;
 
 /*
@@ -17,7 +23,7 @@ BTree btree_init();
 /*
  ** Destroys the tree
 */
-void btree_destroy(BTree tree);
+void btree_destroy(BTree tree, DestroyFunction destroy);
 
 /*
  ** Indicates if the tree is empty
@@ -28,14 +34,14 @@ int btree_empty(BTree tree);
  ** Creates a new tree, with the data given in the root node, and the subtrees
  ** given on the left and right
 */
-BTree btree_join(int data, BTree left, BTree right);
+BTree btree_join(void* data, BTree left, BTree right);
 
 /*
  ** Visits all nodes in the tree applying the visit function,
  ** in the given order (Depth first search algorithm)
 */
 void btree_visit(BTree tree, BTreeVisitOrder order,
-                    void (*visit)(int data));
+                    void (*visit)(void* data));
 
 /*
  ** btree_visit_bfs_recursive:
@@ -44,9 +50,9 @@ void btree_visit(BTree tree, BTreeVisitOrder order,
  ** btree_visit_n_depth:
  ** Applies the visit function only to nodes with the depth given
 */
-void btree_visit_bfs_recursive(BTree tree, void (*visit)(int data));
+void btree_visit_bfs_recursive(BTree tree, void (*visit)(void* data));
 
-void btree_visit_n_depth(BTree tree, int depth, void (*visit)(int data));
+void btree_visit_n_depth(BTree tree, int depth, void (*visit)(void* data));
 
 /*
  ** Iteratively visits all nodes in the tree applying the visit function,
