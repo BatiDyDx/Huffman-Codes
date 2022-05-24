@@ -38,4 +38,36 @@ void sort_freq(CharFreq *freq_array, int len);
  */
 void compress(const char *filename);
 
+/*
+* Returns an array of CharFreq, each element
+* corresponds to a char with its frequency set to 0
+*/
+CharFreq* create_frequencies();
+
+/*
+Frees the array of CharFreq
+*/
+void free_frequencies(CharFreq* frequencies);
+
+/*
+Returns an array of CharFreq where every element
+corresponds to a structure containing a character
+and the number of times it appears in string passed
+*/
+CharFreq* calculate_freq(char* str, int len);
+
+/*
+Given a sorted array of CharFreq, it creates the huffman
+tree corresponding to the frequency of the characters in the
+file to be compressed.
+*/
+BTree create_huff_tree(CharFreq* frequencies);
+
+/*
+Takes a path to a file to be compressed using Huffman
+algorithm, and writes the result to the file path.hf, and the
+corresponding tree used to encode it to the file path.hf.tree
+*/
+void compress(const char *path);
+
 #endif /* __COMP_H__ */

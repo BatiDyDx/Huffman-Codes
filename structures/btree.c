@@ -1,17 +1,6 @@
 #include "btree.h"
-#include "./gqueue.h"
-#include <assert.h>
-#include <stdlib.h>
-#include <stdio.h>
 
 #define MAX(X, Y) (X > Y ? X : Y)
-
-struct _BTNode {
-	void* data;
-	struct _BTNode *left;
-	struct _BTNode *right;
-};
-
 
 BTree btree_init() { return NULL; }
 
@@ -58,20 +47,6 @@ void btree_visit(BTree tree, BTreeVisitOrder order,
 	return;
 }
 
-/*
- ** Function to "copy" a BTree, since a copy function
- ** for pushing to a general stack is required
-*/
-void* id(void* x) {
-	return x;
-}
-
-/*
- ** Function to "destroy" a BTree, since a destroy function
- ** for poping out of a general stack is required.
-*/
-void null(__attribute__((unused)) void* x) { return; }
-
 int btree_leaf(BTree tree) {
 	if (btree_empty(tree))
 		return -1;
@@ -84,14 +59,14 @@ int btree_nnodes(BTree tree) {
 	return btree_nnodes(tree->left) + btree_nnodes(tree->right) + 1;
 }
 
-int btree_search(BTree tree, int data) {
+int btree_search(BTree tree, void* data, CompareFunction cmp) {
 	if (btree_empty(tree))
 		return 0;
-	else if (tree->data == data)
+	else if (cmp(tree->data, data) == 0)
 		return 1;
 	else
-		return (btree_search(tree->left, data) || \
-				btree_search(tree->right, data) );
+		return (btree_search(tree->left, data, cmp) || \
+				btree_search(tree->right, data, cmp) );
 }
 
 BTree btree_copy(BTree tree) {
@@ -124,26 +99,3 @@ int btree_nnodes_depth(BTree tree, int depth) {
 		return (btree_nnodes_depth(tree->left, depth - 1) + \
 				btree_nnodes_depth(tree->right, depth - 1) );
 }
-
-int btree_depth(BTree tree, int data) {
-	int depth, tmp;
-	if (btree_empty(tree))
-		depth = -1;
-	else if (tree->data == data)
-		depth = 0;
-	else if (	(tmp = btree_depth(tree->left, data)) != -1 || \
-				(tmp = btree_depth(tree->right, data))!= -1)
-		depth = 1 + tmp;
-	else
-		depth = -1;
-	return depth;
-}
-
-int btree_sum(BTree tree) {
-	if (btree_empty(tree))
-		return 0;
-	return (tree->data 			  + \
-			btree_sum(tree->left) + \
-			btree_sum(tree->right) );
-}
-
