@@ -102,6 +102,38 @@ BTree create_huff_tree(CharFreq* frequencies) {
   return huff_tree;
 }
 
+
+// TODO: La funcion no se encarga de evitar embordamientos, implementarlo
+unsigned char* concatenar_char_a_cadena(unsigned char c, unsigned char* string){
+  unsigned char string_temporal[2];
+  string_temporal[0] = c;
+  string_temporal[0] = '\0';
+  return (unsigned char*)strcat((char*)string, (char*)string_temporal);
+}
+
+// Recorrer huff_tree para codificar los caracteres
+
+void recorrer_arbol(BTree raiz, unsigned char* encode_chars, unsigned char* reccorido_actual){
+  // En caso de que el arbol sea una hoja, guarda el recorrido que se hizo hasta
+  // llegar a esa hoja en encode_chars
+  if (btree_leaf(raiz)){
+    unsigned char car = ((CharFreq)(raiz->data))->c;
+    encode_chars[car] = reccorido_actual;
+  }
+  // Recorre el subarbol izquierdo, agregando un '0' al recorrido actual
+  recorrer_arbol(raiz->left, encode_chars, concatenar_char_a_cadena('0', reccorido_actual));
+  // Recorre el subarbol derecho, agregando un '1' al recorrido actual
+  recorrer_arbol(raiz->right, encode_chars, concatenar_char_a_cadena('1', reccorido_actual));
+}
+
+
+unsigned char* encode_chars(BTree huff_tree){
+  unsigned char* encode_chars = malloc(sizeof(unsigned char) * CHARS);
+  unsigned char* recorrido_actual = (unsigned char*) "";
+  recorrer_arbol(huff_tree, encode_chars, recorrido_actual);
+  return encode_chars;
+}
+
 char* __attribute__((unused)) encode(
           const char* __attribute__((unused))path,
           BTree __attribute__((unused))huffman_tree)

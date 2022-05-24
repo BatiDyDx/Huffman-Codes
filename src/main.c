@@ -17,10 +17,10 @@ int main(int argc, const char* argv[]) {
   path = argv[2];
   // Call corresponding compressing or decompressing functions
   if (strcmp(cmd, "C") == 0) { // Compress
-    //compress(path);
+    compress(path);
     printf("Compression succeeded");
   } else if (strcmp(cmd, "D") == 0) {
-    //decompress(path);
+    decompress(path);
     printf("Decompression succeeded");
   } else
     usage();
