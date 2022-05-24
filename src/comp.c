@@ -2,6 +2,7 @@
 #include "io.h"
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 void* id(void* data) { return data; }
 
@@ -67,6 +68,18 @@ SGList create_nodes_from_array(CharFreq* frequencies) {
   return nodes;
 }
 
+void serialize_tree(BTree root, char* repr, int *pos) {
+  if (btree_empty(root))
+    return ;
+  else if (!btree_leaf(root)) {
+    repr[*pos] = '0';
+    serialize_tree(root->left, repr, &pos);
+    serialize_tree(root->right, repr, &pos);
+  } else
+    repr[*pos] = '1';
+  pos++;
+}
+
 BTree create_huff_tree(CharFreq* frequencies) {
   // TODO: change variable names
   // nodes refers to elements in the list, while
@@ -102,15 +115,22 @@ BTree create_huff_tree(CharFreq* frequencies) {
   return huff_tree;
 }
 
-char* __attribute__((unused)) encode(
-          const char* __attribute__((unused))path,
-          BTree __attribute__((unused))huffman_tree)
+char* __attribute__((unused)) encode_text(const char* __attribute__((unused))path, BTree huffman_tree)
 {
   return NULL;
 }
 
-char* __attribute__((unused)) encode_tree(BTree __attribute__((unused))huffman_tree) {
-  return NULL;
+
+char* encode_tree(BTree huffman_tree) {
+  int n = 0;
+  int nnodes = btree_nnodes(huffman_tree);
+  char* tree_shape = malloc(sizeof(char) * nnodes);
+  assert(tree_shape != NULL);
+  serialize_tree(huffman_tree, tree_shape, &n);
+
+  strcat();
+
+  return tree_shape;
 }
 
 void compress(const char *path) {
@@ -126,8 +146,10 @@ void compress(const char *path) {
   sort_freq(frequencies, CHARS);
 
   BTree huffman_tree = create_huff_tree(frequencies);
-  char* __attribute__((unused)) encoded_string = encode(path, huffman_tree);
+  char* __attribute__((unused)) encoded_string = encode_text(path, huffman_tree);
   char* __attribute__((unused)) encoded_tree = encode_tree(huffman_tree);
+  
+  
   
   // implode(encoded_string, );
   // writefile(path);
