@@ -15,15 +15,15 @@ void sglist_free(SGList list, DestroyFunction destroy) {
 int sglist_empty(SGList list) { return list == NULL; }
 
 SGList sglist_insert(SGList list, void *data, CopyFunction copy, CompareFunction cmp) {
-  GNode* head;
-  if (list == NULL || cmp(data, list->data) < 0)
+  GNode *head;
+  if (sglist_empty(list) || cmp(data, list->data) < 0)
     head = glist_append_start(list, data, copy);
   else {
     GNode *node;
-    for (node = list; list->next != NULL; list = list->next)
-      if (cmp(data, list->next->data) >= 0)
+    for (node = list; node->next != NULL; node = node->next)
+      if (cmp(data, node->next->data) < 0)
         break;
-    list->next = glist_append_start(list->next, data, copy);
+    node->next = glist_append_start(node->next, data, copy);
     head = list;
   }
   return head;

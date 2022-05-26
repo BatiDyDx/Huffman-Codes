@@ -32,7 +32,7 @@ endif
 	$(CC) -c $(FLAGS) $^ -o $@
 
 tests: $(SOURCE) $(STRUCTURES)
-	$(CC) $(FLAGS) -o huff_test $^ $(TESTS)
+	$(CC) $(FLAGS) -o huff_tests $^ $(TESTS)
 
 
 # Clean .o files and debug folder
@@ -40,4 +40,4 @@ tests: $(SOURCE) $(STRUCTURES)
 clean:
 	-rm -r *.dSYM
 	-rm src/*.o structures/*.o
-	-rm huff huff_test
+	-rm huff huff_tests

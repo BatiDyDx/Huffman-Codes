@@ -2,23 +2,20 @@
 #define __COMP_H__
 
 #include <stdio.h>
+#include <string.h>
 #include "../structures/btree.h"
 #include "../structures/sglist.h"
 
 #define CHARS 256
 
+typedef unsigned char UChar;
+
 struct _CharFreq {
-    unsigned char c;
+    UChar c;
     size_t freq;
 };
 
 typedef struct _CharFreq *CharFreq;
-
-typedef unsigned char UChar;
-
-/*
- **
- */
 
 /*
 Returns a negative integer if the frequency from the first structure
@@ -57,11 +54,13 @@ and the number of times it appears in string passed
 CharFreq* calculate_freq(char* str, int len);
 
 /*
-Given a sorted array of CharFreq, it creates the huffman
+Given an array of CharFreq, it creates the huffman
 tree corresponding to the frequency of the characters in the
 file to be compressed.
 */
-BTree create_huff_tree(CharFreq* frequencies);
+BTree create_huff_tree(CharFreq* frequencies, size_t nchars);
+
+char* encode_tree(BTree huffman_tree, size_t nchars);
 
 /*
 Takes a path to a file to be compressed using Huffman

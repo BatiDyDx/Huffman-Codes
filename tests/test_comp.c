@@ -38,7 +38,30 @@ void test_sort_freq() {
     free_frequencies(frequencies);
 }
 
+void test_encode_tree() {
+    char test_chars[5] = {'c', '1', '4', ' ', '!'};
+    size_t test_freqs[5] = {4, 7, 1, 23, 11};
+    CharFreq frequencies[5];
+    for (int i = 0; i < 5; i++) {
+        frequencies[i] = malloc(sizeof(struct _CharFreq));
+        assert(frequencies[i] != NULL);
+        frequencies[i]->c = (UChar) test_chars[i];
+        frequencies[i]->freq = test_freqs[i];
+    }
+
+    BTree huff_tree = create_huff_tree(frequencies, 5);
+    char* tree_encoding = encode_tree(huff_tree, 5);
+
+    assert(memcmp(tree_encoding, "010100111\0 !4c1", 16) == 0);
+    
+    btree_destroy(huff_tree, free);
+    for (int i = 0; i < 5; i++)
+        free(frequencies[i]);
+    free(tree_encoding);
+}
+
 void run_comp_tests() {
     test_create_frequencies();
     test_calculate_freq();
+    test_encode_tree();
 }
