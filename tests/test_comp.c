@@ -2,21 +2,6 @@
 #include <string.h>
 #include <assert.h>
 
-/*
-* Auxiliar functions for testing
-*/
-
-int sum(int* array, int len) {
-    int result = 0;
-    for (int i = 0; i < len; i++)
-        result += array[i];
-    return result;
-}
-
-
-
-/* ############################# */
-
 
 void test_create_frequencies() {
     CharFreq* array = create_frequencies();

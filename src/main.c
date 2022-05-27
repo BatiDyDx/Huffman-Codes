@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-int main(int argc, const char* argv[]) {
+int main(int argc, const char** argv) {
   // If argument count is incorrect, or second argument
   // is not a C or D, print usage and exit
   

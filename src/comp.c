@@ -122,7 +122,7 @@ BTree create_huff_tree(CharFreq* frequencies, size_t nchars) {
   return huff_tree;
 }
 
-char* encode_text(const char* path, char** chars_encoding, BTree huff_tree) {
+char* encode_text(const char* path, char** chars_encoding, BTree huff_tree, int* __attribute__((unused))len) {
   int path_len = strlen(path);
   int len_max_code_char = btree_height(huff_tree) + 1;
   char* coded_text = malloc(sizeof(char) * path_len * len_max_code_char);
@@ -165,7 +165,7 @@ void char_code_from_tree(BTree root, char** chars_encoding, char* encoding, size
   char_code_from_tree(root->right, chars_encoding, encoding, depth + 1);
 }
 
-char** chars_encoding(BTree huff_tree) {
+char** encode_chars(BTree huff_tree) {
   // Max len of a character codification is the height of the tree
   // (+ 1 to count '\0')
   size_t max_len_encoding = (btree_height(huff_tree) + 1);
@@ -177,7 +177,7 @@ char** chars_encoding(BTree huff_tree) {
   return chars_encoding;
 }
 
-char* encode_tree(BTree huffman_tree, size_t nchars, int* encode_tree) {
+char* encode_tree(BTree huffman_tree, size_t nchars, int* __attribute__((unused))tree_len) {
   size_t nnode = 0, nleaf = 0;
   size_t nnodes = btree_nnodes(huffman_tree);
   char* buf_tree = malloc(sizeof(char) * nnodes);
@@ -212,17 +212,25 @@ void compress(const char *path) {
 
   int encoded_len, reduced_len, tree_len;
   BTree huffman_tree = create_huff_tree(frequencies, CHARS);
-  char* __attribute__((unused)) encoded_text = encode_text(path, huffman_tree, &encoded_len);
-  char* __attribute__((unused)) encoded_tree = encode_tree(huffman_tree, CHARS, &tree_len);
+
+  // IDEA: calcular tree_height y pasarla como argumento a encode_chars y encode_text
+  char** chars_encoding = encode_chars(huffman_tree);
+  char* encoded_text = encode_text(path, chars_encoding, huffman_tree, &encoded_len);
+  char* encoded_tree = encode_tree(huffman_tree, CHARS, &tree_len);
   
   char* reduced_encoding = implode(encoded_text, encoded_len, &reduced_len);
-  // writefile(); path.hf, reduced_encoding, reduded_len
-  // writefile(); path.tree, encoded_tree, tree_len
+  char* path_hf = add_suffix(path, ".hf");
+  char* path_tree = add_suffix(path, ".tree");
+  
+  writefile(path_hf, reduced_encoding, reduced_len);
+  writefile(path_tree, encoded_tree, tree_len);
   
   free(file_content);
   free_frequencies(frequencies, CHARS);
   free(encoded_text);
   free(encoded_tree);
   free(reduced_encoding);
+  free(path_hf);
+  free(path_tree);
   btree_destroy(huffman_tree, free);
 }

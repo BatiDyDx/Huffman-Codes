@@ -17,17 +17,35 @@ char* tree_path_from_file(const char* path) {
     return tree_path;
 }
 
-BTree deserialize_tree(char* encoded_tree, int len) {
-    return NULL;
+BTree deserialize_tree(char* encoded_tree, char* encoded_values) {
+    BTree node = btree_join(NULL, NULL, NULL);
+    switch (*encoded_tree++) {
+        case '0':
+            node->left = deserialize_tree(encoded_tree, encoded_values);
+            node->right = deserialize_tree(encoded_tree, encoded_values);
+            break;
+        case '1':
+            node->data = malloc(sizeof(char));
+            assert(node->data != NULL);
+            *((char*) node->data) = *encoded_values++;
+            break;
+        case '\0':
+            // Impossible
+            assert(0);
+            return;
+    }
+    return node;
 }
 
-BTree tree_from_encoding(
-    char*  __attribute__((unused))encoded_tree,
-    int  __attribute__((unused))len)
-{
-    while (1);
-    
-    return NULL;
+BTree tree_from_encoding(char* encoded_tree) {
+    assert(encoded_tree != NULL);
+    // chequear que no es el caracter nulo unicamente
+    assert(*encoded_tree);
+
+    char* encoded_values = encoded_tree;
+    while (*encoded_values++);
+
+    return deserialize_tree(encoded_tree, encoded_values);
 }
 
 char* decode_text(BTree root, char* encoded_text, const int encoded_len) {
@@ -39,7 +57,9 @@ char* decode_text(BTree root, char* encoded_text, const int encoded_len) {
         return NULL;
     BTree node = root;
     // TODO: resize decoded_text when out of memory
+    // buf_size = 1000;
     for (int i = 0; i < encoded_len; i++) {
+        // nchar == buf_size: realloc(decoded_text, buf_size * 2)
         if (btree_leaf(node)) {
             decoded_text[nchar++] = *((char*)node->data);
             node = root;
@@ -63,13 +83,13 @@ char* decode_text(BTree root, char* encoded_text, const int encoded_len) {
 
 
 void decompress(const char* path) {
-    int text_len, tree_len;
+    int text_len;
     char* tree_path = tree_path_from_file(path);
 
     char* encoded_text = readfile(path, &text_len);
-    char* encoded_tree = readfile(tree_path, &tree_len);   
+    char* encoded_tree = readfile(tree_path, NULL);   
 
-    BTree huff_tree = tree_from_encoding(encoded_tree, tree_len);
+    BTree huff_tree = tree_from_encoding(encoded_tree);
     char* decoded_text = decode_text(huff_tree, encoded_text, text_len);
 
     free(decoded_text);
@@ -77,6 +97,11 @@ void decompress(const char* path) {
     free(encoded_tree);
     free(tree_path);
     btree_destroy(huff_tree, null);
-
-    return ;
 }
+
+/*
+
+0101010110101\0asafrgr
+^              ^
+
+*/
