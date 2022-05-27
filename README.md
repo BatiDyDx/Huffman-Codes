@@ -35,7 +35,7 @@ the original content of f.txt
 
 ## Testing
 
-To compile tests and run tests:
+To compile and run tests:
 ```
 $ make tests && ./huff_tests
 ```

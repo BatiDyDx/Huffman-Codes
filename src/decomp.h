@@ -1,6 +1,9 @@
 #ifndef __DECOMP_H__
 #define __DECOMP_H__
 
+#include "../structures/btree.h"
+
+
 /*
 Given a .hf file of a compressed text,
 decompress it using the huffman algorithm.

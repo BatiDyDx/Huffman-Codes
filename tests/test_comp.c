@@ -2,13 +2,29 @@
 #include <string.h>
 #include <assert.h>
 
+/*
+* Auxiliar functions for testing
+*/
+
+int sum(int* array, int len) {
+    int result = 0;
+    for (int i = 0; i < len; i++)
+        result += array[i];
+    return result;
+}
+
+
+
+/* ############################# */
+
+
 void test_create_frequencies() {
     CharFreq* array = create_frequencies();
     for (int i = 0; i < CHARS; i++) {
         assert(array[i]->freq == 0);
         assert(array[i]->c == (UChar) i);
     }
-    free_frequencies(array);
+    free_frequencies(array, CHARS);
 }
 
 void test_calculate_freq() {
@@ -24,18 +40,45 @@ void test_calculate_freq() {
     assert(frequencies[(UChar) 'e']->freq == 5);
     assert(frequencies[(UChar) EOF]->freq == 0);
 
-    free_frequencies(frequencies);
+    free_frequencies(frequencies, CHARS);
 }
 
 void test_sort_freq() {
+    /*
     char* str = "Ciencias de la computacion en la FCEIA";
     size_t len = strlen(str) + 1; // Incluimos '\0' tambien
     CharFreq* frequencies = calculate_freq(str, len);
     sort_freq(frequencies, len);
 
-    /* TODO */
+    // TODO
 
-    free_frequencies(frequencies);
+    free_frequencies(frequencies, 20); */
+}
+
+void test_create_huff_tree() {
+    // Cadena de prueba: "Ciencias de la computacion en la FCEIA"
+    char chars_str[20] = {
+                        'C', 'i', 'e', 'n', 'c', 'a', 's', 
+                        ' ', 'd', 'l', 'o', 'm', 'p', 'u',
+                        't', 'F', 'E', 'I', 'A', '\0'};
+    size_t frequencies_str[20] = {
+                        2, 2, 2, 3, 2, 4, 1,
+                        6, 1, 2, 2, 1, 1, 1,
+                        1, 1, 1, 1, 1, 1};
+    CharFreq* char_freq_str = malloc(sizeof(CharFreq) * 20);
+    assert(char_freq_str != NULL);
+    for (int i = 0; i < 20; i++) {
+        char_freq_str[i] = malloc(sizeof(struct _CharFreq));
+        assert(char_freq_str[i] != NULL);
+        char_freq_str[i]->c = (UChar) chars_str[i];
+        char_freq_str[i]->freq = frequencies_str[i];
+    }
+    BTree root = create_huff_tree(char_freq_str, 20);
+
+    assert(0);
+
+    btree_destroy(root, free);
+    free_frequencies(char_freq_str, 20);
 }
 
 void test_encode_tree() {
@@ -64,4 +107,5 @@ void run_comp_tests() {
     test_create_frequencies();
     test_calculate_freq();
     test_encode_tree();
+    test_create_huff_tree();
 }

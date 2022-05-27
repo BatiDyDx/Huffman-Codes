@@ -1,5 +1,7 @@
 #include "comp.h"
 #include "io.h"
+#include <stdio.h>
+#include <string.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,8 +41,8 @@ CharFreq* create_frequencies() {
   return frequencies;
 }
 
-void free_frequencies(CharFreq* frequencies) {
-  for (int i = 0; i < CHARS; i++)
+void free_frequencies(CharFreq* frequencies, size_t len) {
+  for (size_t i = 0; i < len; i++)
     free(frequencies[i]);
   free(frequencies);
 }
@@ -120,7 +122,8 @@ BTree create_huff_tree(CharFreq* frequencies, size_t nchars) {
 }
 
 char* __attribute__((unused)) encode_text(const char* __attribute__((unused))path,
-      __attribute__((unused))BTree huffman_tree) {
+      __attribute__((unused))BTree huffman_tree,
+      __attribute__((unused))int* len) {
   return NULL;
 }
 
@@ -176,7 +179,7 @@ char* __attribute__((unused)) encode(
   return NULL;
 }
 
-char* encode_tree(BTree huffman_tree, size_t nchars) {
+char* encode_tree(BTree huffman_tree, size_t nchars, int* encode_tree) {
   size_t nnode = 0, nleaf = 0;
   size_t nnodes = btree_nnodes(huffman_tree);
   char* buf_tree = malloc(sizeof(char) * nnodes);
@@ -209,16 +212,19 @@ void compress(const char *path) {
 
   CharFreq* frequencies = calculate_freq(file_content, len);
 
+  int encoded_len, reduced_len, tree_len;
   BTree huffman_tree = create_huff_tree(frequencies, CHARS);
-  char* __attribute__((unused)) encoded_string = encode_text(path, huffman_tree);
-  char* __attribute__((unused)) encoded_tree = encode_tree(huffman_tree, CHARS);
+  char* __attribute__((unused)) encoded_text = encode_text(path, huffman_tree, &encoded_len);
+  char* __attribute__((unused)) encoded_tree = encode_tree(huffman_tree, CHARS, &tree_len);
   
+  char* reduced_encoding = implode(encoded_text, encoded_len, &reduced_len);
+  // writefile(); path.hf, reduced_encoding, reduded_len
+  // writefile(); path.tree, encoded_tree, tree_len
   
-  
-  // implode(encoded_string, );
-  // writefile(path);
-
   free(file_content);
-  free_frequencies(frequencies);
+  free_frequencies(frequencies, CHARS);
+  free(encoded_text);
+  free(encoded_tree);
+  free(reduced_encoding);
   btree_destroy(huffman_tree, free);
 }
