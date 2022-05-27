@@ -119,9 +119,13 @@ BTree create_huff_tree(CharFreq* frequencies, size_t nchars) {
   return huff_tree;
 }
 
-char* __attribute__((unused)) encode_text(const char* __attribute__((unused))path,
-      __attribute__((unused))BTree huffman_tree) {
-  return NULL;
+char* encode_text(const char* path, char** chars_encoding, BTree huff_tree) {
+  int path_len = strlen(path);
+  int len_max_code_char = btree_height(huff_tree);
+  char* coded_text = malloc(sizeof(char) * path_len * len_max_code_char);
+  for (int i = 0; i < path_len; i++)
+    strcat(coded_text, chars_encoding[(UChar)path[i]]);
+  return coded_text;
 }
 
 /*
@@ -169,12 +173,12 @@ char** chars_encoding(BTree huff_tree) {
   return chars_encoding;
 }
 
-char* __attribute__((unused)) encode(
-          const char* __attribute__((unused))path,
-          BTree __attribute__((unused))huffman_tree)
-{
-  return NULL;
-}
+// char* __attribute__((unused)) encode(
+//           const char* __attribute__((unused))path,
+//           BTree __attribute__((unused))huffman_tree)
+// {
+//   return NULL;
+// }
 
 char* encode_tree(BTree huffman_tree, size_t nchars) {
   size_t nnode = 0, nleaf = 0;
@@ -208,14 +212,14 @@ void compress(const char *path) {
   }
 
   CharFreq* frequencies = calculate_freq(file_content, len);
-
   BTree huffman_tree = create_huff_tree(frequencies, CHARS);
-  char* __attribute__((unused)) encoded_string = encode_text(path, huffman_tree);
-  char* __attribute__((unused)) encoded_tree = encode_tree(huffman_tree, CHARS);
+  //char** chars_encoded = chars_encoding(huffman_tree);
+  //char* encoded_string = encode_text(path, chars_encoded, huffman_tree);
+  //char* __attribute__((unused)) encoded_tree = encode_tree(huffman_tree, CHARS);
   
   
   
-  // implode(encoded_string, );
+  //implode(encoded_string, );
   // writefile(path);
 
   free(file_content);
