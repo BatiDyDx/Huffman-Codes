@@ -36,4 +36,9 @@ char* explode(char* buf, int len, int* nlen);
  */
 void usage(void);
 
+/**
+ * Agrega un sufijo al al path pasado
+ */
+char* add_sufix(char* path, char* ext);
+
 #endif

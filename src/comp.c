@@ -167,7 +167,7 @@ char** encode_chars(BTree huff_tree) {
   return chars_encoding;
 }
 
-char* encode_tree(BTree huffman_tree, size_t nchars, int* encode_tree) {
+char* encode_tree(BTree huffman_tree, size_t nchars, int* tree_len) {
   size_t nnode = 0, nleaf = 0;
   size_t nnodes = btree_nnodes(huffman_tree);
   char* buf_tree = malloc(sizeof(char) * nnodes);
@@ -202,8 +202,8 @@ void compress(const char *path) {
 
   int encoded_len, reduced_len, tree_len;
   BTree huffman_tree = create_huff_tree(frequencies, CHARS);
-  char* __attribute__((unused)) encoded_text = encode_text(path, huffman_tree, &encoded_len);
-  char* __attribute__((unused)) encoded_tree = encode_tree(huffman_tree, CHARS, &tree_len);
+  char* encoded_text = encode_text(path, huffman_tree, &encoded_len);
+  char* encoded_tree = encode_tree(huffman_tree, CHARS, &tree_len);
   
   char* reduced_encoding = implode(encoded_text, encoded_len, &reduced_len);
   // writefile(); path.hf, reduced_encoding, reduded_len

@@ -39,7 +39,7 @@ char* decode_text(BTree root, char* encoded_text, const int encoded_len) {
         return NULL;
     BTree node = root;
     // TODO: resize decoded_text when out of memory
-    for (int i = 0; i < encoded_len; i++) {
+    for (int i = 0; i < encoded_len; i++){
         if (btree_leaf(node)) {
             decoded_text[nchar++] = *((char*)node->data);
             node = root;
@@ -61,8 +61,7 @@ char* decode_text(BTree root, char* encoded_text, const int encoded_len) {
     return decoded_text;
 }
 
-
-void decompress(const char* path) {
+void decompress(const char* path){
     int text_len, tree_len;
     char* tree_path = tree_path_from_file(path);
 

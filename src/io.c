@@ -137,3 +137,11 @@ void usage(void) {
 	puts("huff D f.txt.hf f.txt.tree");
 	exit(EXIT_FAILURE);
 }
+
+char* add_sufix(char* path, char* ext){
+  // Agregamos un +1 para agregar el caracter '\0'
+  char* new_path = malloc(sizeof(char) * (strlen(path) + strlen(ext) + 1));
+  strcat(new_path, path);
+  strcat(new_path, ext);
+  return new_path;
+}
