@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 void* id(void* data) { return data; }
 
@@ -121,22 +122,12 @@ BTree create_huff_tree(CharFreq* frequencies, size_t nchars) {
 
 char* encode_text(const char* path, char** chars_encoding, BTree huff_tree) {
   int path_len = strlen(path);
-  int len_max_code_char = btree_height(huff_tree);
+  int len_max_code_char = btree_height(huff_tree) + 1;
   char* coded_text = malloc(sizeof(char) * path_len * len_max_code_char);
   for (int i = 0; i < path_len; i++)
     strcat(coded_text, chars_encoding[(UChar)path[i]]);
   return coded_text;
 }
-
-/*
-// TODO: La funcion no se encarga de evitar embordamientos, implementarlo
-unsigned char* concatenar_char_a_cadena(unsigned char c, unsigned char* string){
-  unsigned char string_temporal[2];
-  string_temporal[0] = c;
-  string_temporal[0] = '\0';
-  return (unsigned char*)strcat((char*)string, (char*)string_temporal);
-}
-*/
 
 // Iterate over the huffman tree to get each character codification in binary
 void char_code_from_tree(BTree root, char** chars_encoding, char* encoding, size_t depth) {
@@ -213,14 +204,12 @@ void compress(const char *path) {
 
   CharFreq* frequencies = calculate_freq(file_content, len);
   BTree huffman_tree = create_huff_tree(frequencies, CHARS);
-  //char** chars_encoded = chars_encoding(huffman_tree);
-  //char* encoded_string = encode_text(path, chars_encoded, huffman_tree);
-  //char* __attribute__((unused)) encoded_tree = encode_tree(huffman_tree, CHARS);
+  char** chars_encoded = chars_encoding(huffman_tree);
+  char* encoded_string = encode_text(path, chars_encoded, huffman_tree);
+  char* encoded_tree = encode_tree(huffman_tree, CHARS);
   
-  
-  
-  //implode(encoded_string, );
-  // writefile(path);
+  char* imploded_string = implode(encoded_string, );
+  writefile(path);
 
   free(file_content);
   free_frequencies(frequencies);
