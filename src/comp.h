@@ -1,8 +1,6 @@
 #ifndef __COMP_H__
 #define __COMP_H__
 
-#include <stdio.h>
-#include <string.h>
 #include "../structures/btree.h"
 #include "../structures/sglist.h"
 
@@ -44,7 +42,7 @@ CharFreq* create_frequencies();
 /*
 Frees the array of CharFreq
 */
-void free_frequencies(CharFreq* frequencies);
+void free_frequencies(CharFreq* frequencies, size_t len);
 
 /*
 Returns an array of CharFreq where every element
@@ -60,7 +58,9 @@ file to be compressed.
 */
 BTree create_huff_tree(CharFreq* frequencies, size_t nchars);
 
-char* encode_tree(BTree huffman_tree, size_t nchars);
+
+/**/
+char* encode_tree(BTree huffman_tree, size_t nchars, int* encode_tree);
 
 /*
 Takes a path to a file to be compressed using Huffman

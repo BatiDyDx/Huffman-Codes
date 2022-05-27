@@ -1,5 +1,7 @@
 #include "comp.h"
 #include "io.h"
+#include <stdio.h>
+#include <string.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
@@ -40,8 +42,8 @@ CharFreq* create_frequencies() {
   return frequencies;
 }
 
-void free_frequencies(CharFreq* frequencies) {
-  for (int i = 0; i < CHARS; i++)
+void free_frequencies(CharFreq* frequencies, size_t len) {
+  for (size_t i = 0; i < len; i++)
     free(frequencies[i]);
   free(frequencies);
 }
@@ -125,6 +127,7 @@ char* encode_text(const char* path, char** chars_encoding, BTree huff_tree) {
   int len_max_code_char = btree_height(huff_tree) + 1;
   char* coded_text = malloc(sizeof(char) * path_len * len_max_code_char);
   for (int i = 0; i < path_len; i++)
+    // for (char c = chars_encoding[])
     strcat(coded_text, chars_encoding[(UChar)path[i]]);
   return coded_text;
 }
@@ -152,7 +155,7 @@ void char_code_from_tree(BTree root, char** chars_encoding, char* encoding, size
   char_code_from_tree(root->right, chars_encoding, encoding, depth + 1);
 }
 
-char** chars_encoding(BTree huff_tree) {
+char** encode_chars(BTree huff_tree) {
   // Max len of a character codification is the height of the tree
   // (+ 1 to count '\0')
   size_t max_len_encoding = (btree_height(huff_tree) + 1);
@@ -164,14 +167,7 @@ char** chars_encoding(BTree huff_tree) {
   return chars_encoding;
 }
 
-// char* __attribute__((unused)) encode(
-//           const char* __attribute__((unused))path,
-//           BTree __attribute__((unused))huffman_tree)
-// {
-//   return NULL;
-// }
-
-char* encode_tree(BTree huffman_tree, size_t nchars) {
+char* encode_tree(BTree huffman_tree, size_t nchars, int* encode_tree) {
   size_t nnode = 0, nleaf = 0;
   size_t nnodes = btree_nnodes(huffman_tree);
   char* buf_tree = malloc(sizeof(char) * nnodes);
@@ -203,15 +199,20 @@ void compress(const char *path) {
   }
 
   CharFreq* frequencies = calculate_freq(file_content, len);
-  BTree huffman_tree = create_huff_tree(frequencies, CHARS);
-  char** chars_encoded = chars_encoding(huffman_tree);
-  char* encoded_string = encode_text(path, chars_encoded, huffman_tree);
-  char* encoded_tree = encode_tree(huffman_tree, CHARS);
-  
-  char* imploded_string = implode(encoded_string, );
-  writefile(path);
 
+  int encoded_len, reduced_len, tree_len;
+  BTree huffman_tree = create_huff_tree(frequencies, CHARS);
+  char* __attribute__((unused)) encoded_text = encode_text(path, huffman_tree, &encoded_len);
+  char* __attribute__((unused)) encoded_tree = encode_tree(huffman_tree, CHARS, &tree_len);
+  
+  char* reduced_encoding = implode(encoded_text, encoded_len, &reduced_len);
+  // writefile(); path.hf, reduced_encoding, reduded_len
+  // writefile(); path.tree, encoded_tree, tree_len
+  
   free(file_content);
-  free_frequencies(frequencies);
+  free_frequencies(frequencies, CHARS);
+  free(encoded_text);
+  free(encoded_tree);
+  free(reduced_encoding);
   btree_destroy(huffman_tree, free);
 }
