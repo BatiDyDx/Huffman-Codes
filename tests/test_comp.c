@@ -93,7 +93,7 @@ void test_encode_tree() {
     }
 
     BTree huff_tree = create_huff_tree(frequencies, 5);
-    char* tree_encoding = encode_tree(huff_tree, 5);
+    char* tree_encoding = encode_tree(huff_tree, 5, NULL);
 
     assert(memcmp(tree_encoding, "010100111\0 !4c1", 16) == 0);
     

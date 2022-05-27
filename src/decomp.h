@@ -10,6 +10,6 @@ decompress it using the huffman algorithm.
 Depends on the existence of a .tree file that
 indicates the tree used to encode the text
 */
-void decompress(const char* filename);
+// void decompress(const char* filename);
 
 #endif /* __DECOMP_H__ */

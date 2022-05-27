@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 void* id(void* data) { return data; }
 
@@ -121,10 +122,14 @@ BTree create_huff_tree(CharFreq* frequencies, size_t nchars) {
   return huff_tree;
 }
 
-char* __attribute__((unused)) encode_text(const char* __attribute__((unused))path,
-      __attribute__((unused))BTree huffman_tree,
-      __attribute__((unused))int* len) {
-  return NULL;
+char* encode_text(const char* path, char** chars_encoding, BTree huff_tree) {
+  int path_len = strlen(path);
+  int len_max_code_char = btree_height(huff_tree) + 1;
+  char* coded_text = malloc(sizeof(char) * path_len * len_max_code_char);
+  for (int i = 0; i < path_len; i++)
+    // for (char c = chars_encoding[])
+    strcat(coded_text, chars_encoding[(UChar)path[i]]);
+  return coded_text;
 }
 
 /*
@@ -170,13 +175,6 @@ char** chars_encoding(BTree huff_tree) {
   
   free(char_code);
   return chars_encoding;
-}
-
-char* __attribute__((unused)) encode(
-          const char* __attribute__((unused))path,
-          BTree __attribute__((unused))huffman_tree)
-{
-  return NULL;
 }
 
 char* encode_tree(BTree huffman_tree, size_t nchars, int* encode_tree) {
