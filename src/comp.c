@@ -132,16 +132,6 @@ char* encode_text(const char* path, char** chars_encoding, BTree huff_tree, int*
   return coded_text;
 }
 
-/*
-// TODO: La funcion no se encarga de evitar embordamientos, implementarlo
-unsigned char* concatenar_char_a_cadena(unsigned char c, unsigned char* string){
-  unsigned char string_temporal[2];
-  string_temporal[0] = c;
-  string_temporal[0] = '\0';
-  return (unsigned char*)strcat((char*)string, (char*)string_temporal);
-}
-*/
-
 // Iterate over the huffman tree to get each character codification in binary
 void char_code_from_tree(BTree root, char** chars_encoding, char* encoding, size_t depth) {
   // If the tree is a leaf, store the path in chars_encoding
