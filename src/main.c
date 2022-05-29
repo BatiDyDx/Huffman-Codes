@@ -19,11 +19,11 @@ int main(int argc, const char** argv) {
   if (strcmp(cmd, "C") == 0) { // Compress
     compress(path);
     printf("Compression succeeded");
-  } //else if (strcmp(cmd, "D") == 0) {
-  //   decompress(path);
-  //   printf("Decompression succeeded");
-  // } else
-  //   usage();
+  } else if (strcmp(cmd, "D") == 0) {
+    decompress(path);
+    printf("Decompression succeeded");
+  } else
+    usage();
 
   return 0;
 }

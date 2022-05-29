@@ -138,7 +138,7 @@ void usage(void) {
 	exit(EXIT_FAILURE);
 }
 
-char* add_sufix(const char* path, const char* ext){
+char* add_suffix(const char* path, const char* ext){
 	// Agregamos un +1 para agregar el caracter '\0'
 	char* new_path = malloc(sizeof(char) * (strlen(path) + strlen(ext) + 1));
 	strcat(new_path, path);

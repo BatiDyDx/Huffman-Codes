@@ -122,13 +122,16 @@ BTree create_huff_tree(CharFreq* frequencies, size_t nchars) {
   return huff_tree;
 }
 
-char* encode_text(const char* path, char** chars_encoding, BTree huff_tree, int* __attribute__((unused))len) {
-  int path_len = strlen(path);
-  int len_max_code_char = btree_height(huff_tree) + 1;
-  char* coded_text = malloc(sizeof(char) * path_len * len_max_code_char);
-  for (int i = 0; i < path_len; i++)
-    // for (char c = chars_encoding[])
-    strcat(coded_text, chars_encoding[(UChar)path[i]]);
+char* encode_text(char* text, char** chars_encoding, BTree huff_tree, int *len) {
+  size_t nchar = 0, text_len = strlen(text);
+  size_t len_max_code_char = btree_height(huff_tree) + 1;
+  char* coded_text = malloc(sizeof(char) * text_len * len_max_code_char);
+
+  for (size_t i = 0; i < text_len; i++)
+    for (char* s = chars_encoding[(UChar) text[i]]; *s != '\0'; s++)
+      coded_text[nchar++] = *s;
+
+  *len = nchar;
   return coded_text;
 }
 
@@ -158,7 +161,7 @@ void char_code_from_tree(BTree root, char** chars_encoding, char* encoding, size
 char** encode_chars(BTree huff_tree) {
   // Max len of a character codification is the height of the tree
   // (+ 1 to count '\0')
-  size_t max_len_encoding = (btree_height(huff_tree) + 1);
+  size_t max_len_encoding = btree_height(huff_tree) + 1;
   char** chars_encoding = malloc(sizeof(char*) * CHARS);
   char* char_code = malloc(sizeof(char) * max_len_encoding);
   char_code_from_tree(huff_tree, chars_encoding, char_code, 0);
@@ -167,7 +170,7 @@ char** encode_chars(BTree huff_tree) {
   return chars_encoding;
 }
 
-char* encode_tree(BTree huffman_tree, size_t nchars, int* __attribute__((unused))tree_len) {
+char* encode_tree(BTree huffman_tree, size_t nchars, int *tree_len) {
   size_t nnode = 0, nleaf = 0;
   size_t nnodes = btree_nnodes(huffman_tree);
   char* buf_tree = malloc(sizeof(char) * nnodes);
@@ -185,6 +188,8 @@ char* encode_tree(BTree huffman_tree, size_t nchars, int* __attribute__((unused)
   
   free(buf_tree);
   free(buf_leaves);
+
+  *tree_len = nnodes + nchars + 2;
 
   return tree_encoding;
 }
@@ -205,9 +210,10 @@ void compress(const char *path) {
 
   // IDEA: calcular tree_height y pasarla como argumento a encode_chars y encode_text
   char** chars_encoding = encode_chars(huffman_tree);
-  char* encoded_text = encode_text(path, chars_encoding, huffman_tree, &encoded_len);
+  char* encoded_text = encode_text(file_content, chars_encoding, huffman_tree, &encoded_len);
   char* encoded_tree = encode_tree(huffman_tree, CHARS, &tree_len);
   
+  printf("Before imploded: %s\n", encoded_text);
   char* reduced_encoding = implode(encoded_text, encoded_len, &reduced_len);
   char* path_hf = add_suffix(path, ".hf");
   char* path_tree = add_suffix(path, ".tree");
@@ -222,5 +228,8 @@ void compress(const char *path) {
   free(reduced_encoding);
   free(path_hf);
   free(path_tree);
+  for (int i = 0; i < CHARS; i++)
+    free(chars_encoding[i]);
+  free(chars_encoding);
   btree_destroy(huffman_tree, free);
 }

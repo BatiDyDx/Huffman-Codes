@@ -2,4 +2,5 @@
 [ ] Test functions and structures
 [ ] Implement compressor
 [ ] Implement decompressor
+[ ] Update headers
 [ ] Organize code (remove redundant includes, organize functions, add comments, etc)

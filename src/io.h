@@ -39,6 +39,6 @@ void usage(void);
 /**
  * Agrega un sufijo al al path pasado
  */
-char* add_sufix(const char* path, const char* ext);
+char* add_suffix(const char* path, const char* ext);
 
 #endif

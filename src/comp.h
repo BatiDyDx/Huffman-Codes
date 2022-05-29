@@ -59,7 +59,7 @@ file to be compressed.
 BTree create_huff_tree(CharFreq* frequencies, size_t nchars);
 
 
-char* encode_text(const char* path, char** chars_encoding, BTree huff_tree, int* len);
+char* encode_text(char* text, char** chars_encoding, BTree huff_tree, int* len);
 
 /**/
 char* encode_tree(BTree huffman_tree, size_t nchars, int* encode_tree);
