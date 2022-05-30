@@ -66,9 +66,6 @@ SGList create_nodes_from_array(CharFreq* frequencies, size_t len) {
   SGList nodes = sglist_init();
   for (int i = len - 1; 0 <= i; i--) {
     BTree tmp = btree_join(copy_charfreq(frequencies[i]), NULL, NULL);
-    // Since frequencies is a sorted array, inserting backwards
-    // is equivalent to inserting always on the first node, so
-    // this insertion is O(1)
     nodes = sglist_insert(nodes, tmp, id, (CompareFunction)compare_nodes_freq);
   }
   return nodes;
@@ -110,7 +107,7 @@ BTree create_huff_tree(CharFreq* frequencies, size_t nchars) {
     BTree parent_node = btree_join(new_freq, node1, node2);
     
     // Free the first two nodes, without freeing its data,
-    // because the data is now referenced in 
+    // because the data is now referenced in parent_node
     SGList temp = nodes->next->next;
     free(nodes->next);
     free(nodes);
@@ -179,17 +176,17 @@ char* encode_tree(BTree huffman_tree, size_t nchars, int *tree_len) {
 
   serialize_tree_and_nodes(huffman_tree, buf_tree, &nnode, buf_leaves, &nleaf);
 
-  char* tree_encoding = malloc(sizeof(char) * (nnodes + nchars + 2));
+  char* tree_encoding = malloc(sizeof(char) * (nnodes + nchars + 1));
   assert(tree_encoding != NULL);
+  // Copiamos con strncpy ya que sabemos que son todos '1' y '0' en la cadena
   strncpy(tree_encoding, buf_tree, nnodes);
-  strncpy(tree_encoding + nnodes + 1, buf_leaves, nchars);
+  memcpy(tree_encoding + nnodes + 1, buf_leaves, sizeof(char) * nchars);
   tree_encoding[nnodes] = '\0';
-  tree_encoding[nnodes + nchars + 1] = '\0';
   
   free(buf_tree);
   free(buf_leaves);
 
-  *tree_len = nnodes + nchars + 2;
+  *tree_len = nnodes + nchars + 1;
 
   return tree_encoding;
 }
@@ -208,16 +205,16 @@ void compress(const char *path) {
   int encoded_len, reduced_len, tree_len;
   BTree huffman_tree = create_huff_tree(frequencies, CHARS);
 
-  // IDEA: calcular tree_height y pasarla como argumento a encode_chars y encode_text
   char** chars_encoding = encode_chars(huffman_tree);
   char* encoded_text = encode_text(file_content, chars_encoding, huffman_tree, &encoded_len);
   char* encoded_tree = encode_tree(huffman_tree, CHARS, &tree_len);
   
-  printf("Before imploded: %s\n", encoded_text);
   char* reduced_encoding = implode(encoded_text, encoded_len, &reduced_len);
   char* path_hf = add_suffix(path, ".hf");
   char* path_tree = add_suffix(path, ".tree");
   
+  printf("%s\n", path_hf);
+
   writefile(path_hf, reduced_encoding, reduced_len);
   writefile(path_tree, encoded_tree, tree_len);
   

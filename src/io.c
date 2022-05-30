@@ -145,3 +145,16 @@ char* add_suffix(const char* path, const char* ext){
 	strcat(new_path, ext);
 	return new_path;
 }
+
+char* replace_suffix(const char* path, const char* new_ext, unsigned old_ext_len) {
+	// Por ejemplo, si se quiere reemplazar el sufijo .txt de por .c en
+	// "directorio/archivo.txt" se tendra "directorio/archivo.c", cuya longitud
+	// es len("directorio/archivo") + len(".c") - len(".txt") + 1 (para el '\0')
+	size_t new_path_len = strlen(path) + strlen(new_ext) - old_ext_len + 1;
+	char* new_path = malloc(sizeof(char) * new_path_len);
+	assert(new_path != NULL);
+
+	strncat(new_path, path, strlen(path) - old_ext_len);
+	strcat(new_path, new_ext);
+	return new_path;
+}

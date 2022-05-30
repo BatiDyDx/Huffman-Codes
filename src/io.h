@@ -41,4 +41,9 @@ void usage(void);
  */
 char* add_suffix(const char* path, const char* ext);
 
+/*
+
+*/
+char* replace_suffix(const char* path, const char* new_ext, unsigned old_ext_len);
+
 #endif
