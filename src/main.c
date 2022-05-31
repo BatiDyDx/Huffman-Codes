@@ -16,7 +16,7 @@ int main(int argc, const char** argv) {
   cmd = argv[1];
   path = argv[2];
   // Call corresponding compressing or decompressing functions
-  if (strcmp(cmd, "C") == 0) { // Compress
+  if (strcmp(cmd, "C") == 0) {
     compress(path);
     printf("Compression succeeded");
   } else if (strcmp(cmd, "D") == 0) {

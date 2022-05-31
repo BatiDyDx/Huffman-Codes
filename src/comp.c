@@ -1,23 +1,21 @@
 #include "comp.h"
 #include "io.h"
-#include <stdio.h>
 #include <string.h>
 #include <assert.h>
 #include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
 
 void* id(void* data) { return data; }
 
-int compare_freq(CharFreq ch1, CharFreq ch2){
-  return ch1->freq - ch2->freq;
+static int compare_freq(CharFreq* ch1, CharFreq* ch2) {
+  return (*ch1)->freq - (*ch2)->freq;
 }
 
 void sort_freq(CharFreq* freq_array, int len) {
-  qsort(freq_array, len, sizeof(CharFreq), (int (*)(const void*, const void*))compare_freq);
+  qsort(freq_array, len, sizeof(CharFreq),
+      (int (*)(const void*, const void*))compare_freq);
 }
 
-CharFreq copy_charfreq(CharFreq ch) {
+static CharFreq copy_charfreq(CharFreq ch) {
   CharFreq copy = malloc(sizeof(struct _CharFreq));
   assert(copy != NULL);
   copy->c = ch->c;
@@ -25,9 +23,7 @@ CharFreq copy_charfreq(CharFreq ch) {
   return copy;
 }
 
-CharFreq* create_frequencies() {
-  CharFreq* frequencies = malloc(sizeof(CharFreq) * CHARS);
-  assert(frequencies != NULL);
+void create_frequencies(CharFreq buf[CHARS]) {
   CharFreq temp;
   // char* archivo;
   // Incializa el array, con todas las frecuencias en 0
@@ -36,27 +32,17 @@ CharFreq* create_frequencies() {
     assert(temp != NULL);
     temp->c = (UChar) i;
     temp->freq = 0;
-    frequencies[i] = temp;
+    buf[i] = temp;
   }
-
-  return frequencies;
 }
 
-void free_frequencies(CharFreq* frequencies, size_t len) {
-  for (size_t i = 0; i < len; i++)
-    free(frequencies[i]);
-  free(frequencies);
-}
-
-CharFreq* calculate_freq(char* str, int len) {
-  CharFreq* frequencies = create_frequencies();
+void calculate_freq(char* str, int len, CharFreq frequencies[CHARS]) {
   for (int j = 0; j < len; j++)
     frequencies[(UChar) str[j]]->freq++;
-  return frequencies;
 }
 
-int compare_nodes_freq(BTree node1, BTree node2) {
-  return compare_freq(node1->data, node2->data);
+static int compare_nodes_freq(BTree node1, BTree node2) {
+  return compare_freq((CharFreq*)&node1->data, (CharFreq*)&node2->data);
 }
 
 SGList create_nodes_from_array(CharFreq* frequencies, size_t len) {
@@ -71,7 +57,8 @@ SGList create_nodes_from_array(CharFreq* frequencies, size_t len) {
   return nodes;
 }
 
-void serialize_tree_and_nodes(BTree root, char* tree_repr, size_t *nnode, char* buf_leaves, size_t *nleaf) {
+static void serialize_tree_and_nodes(BTree root, char* tree_repr, size_t *nnode, 
+                                     char* buf_leaves, size_t *nleaf) {
   if (btree_empty(root))
     return ;
   else if (!btree_leaf(root)) {
@@ -100,7 +87,8 @@ BTree create_huff_tree(CharFreq* frequencies, size_t nchars) {
     assert(new_freq != NULL);
 
     // The frequency of the parent is the sum of the frequencies of its children
-    new_freq->freq = ((CharFreq)(node1->data))->freq + ((CharFreq)(node2->data))->freq;
+    new_freq->freq = ((CharFreq)(node1->data))->freq;
+    new_freq->freq += ((CharFreq)(node2->data))->freq;
 
     // new_freq->c se deja como basura, ya que no nos va a importar acceder a este
     // a menos que sea una hoja.
@@ -112,17 +100,19 @@ BTree create_huff_tree(CharFreq* frequencies, size_t nchars) {
     free(nodes->next);
     free(nodes);
 
-    nodes = sglist_insert(temp, parent_node, id, (CompareFunction)compare_nodes_freq);
+    nodes = sglist_insert(temp, parent_node, id,
+                          (CompareFunction)compare_nodes_freq);
   }
+
   huff_tree = (BTree)nodes->data;
   free(nodes); // List has only one element
   return huff_tree;
 }
 
-char* encode_text(char* text, char** chars_encoding, BTree huff_tree, int *len) {
-  size_t nchar = 0, text_len = strlen(text);
-  size_t len_max_code_char = btree_height(huff_tree) + 1;
-  char* coded_text = malloc(sizeof(char) * text_len * len_max_code_char);
+char* encode_text(char* text, char** chars_encoding, size_t text_len,
+                  int max_char_len, int *len) {
+  size_t nchar = 0;
+  char* coded_text = malloc(sizeof(char) * text_len * max_char_len);
 
   for (size_t i = 0; i < text_len; i++)
     for (char* s = chars_encoding[(UChar) text[i]]; *s != '\0'; s++)
@@ -133,16 +123,17 @@ char* encode_text(char* text, char** chars_encoding, BTree huff_tree, int *len) 
 }
 
 // Iterate over the huffman tree to get each character codification in binary
-void char_code_from_tree(BTree root, char** chars_encoding, char* encoding, size_t depth) {
+static void char_code_from_tree(BTree root, char** chars_encoding,
+                                char* encoding, size_t depth) {
   // If the tree is a leaf, store the path in chars_encoding
   if (btree_leaf(root)) {
     UChar c = ((CharFreq)(root->data))->c;
     encoding[depth] = '\0';
 
-    char* tmp = malloc(sizeof(UChar) * depth);
+    char* tmp = malloc(sizeof(char) * (depth + 1));
     assert(tmp != NULL);
 
-    strcpy(tmp, encoding);
+    memcpy(tmp, encoding, sizeof(char) * (depth + 1));
     chars_encoding[(UChar) c] = tmp;
 
     return;
@@ -155,16 +146,12 @@ void char_code_from_tree(BTree root, char** chars_encoding, char* encoding, size
   char_code_from_tree(root->right, chars_encoding, encoding, depth + 1);
 }
 
-char** encode_chars(BTree huff_tree) {
-  // Max len of a character codification is the height of the tree
-  // (+ 1 to count '\0')
-  size_t max_len_encoding = btree_height(huff_tree) + 1;
-  char** chars_encoding = malloc(sizeof(char*) * CHARS);
-  char* char_code = malloc(sizeof(char) * max_len_encoding);
+void encode_chars(BTree huff_tree, char* chars_encoding[CHARS],
+                  int max_char_len) {
+  char* char_code = malloc(sizeof(char) * max_char_len);
   char_code_from_tree(huff_tree, chars_encoding, char_code, 0);
   
   free(char_code);
-  return chars_encoding;
 }
 
 char* encode_tree(BTree huffman_tree, size_t nchars, int *tree_len) {
@@ -178,10 +165,10 @@ char* encode_tree(BTree huffman_tree, size_t nchars, int *tree_len) {
 
   char* tree_encoding = malloc(sizeof(char) * (nnodes + nchars + 1));
   assert(tree_encoding != NULL);
-  // Copiamos con strncpy ya que sabemos que son todos '1' y '0' en la cadena
-  strncpy(tree_encoding, buf_tree, nnodes);
-  memcpy(tree_encoding + nnodes + 1, buf_leaves, sizeof(char) * nchars);
+  
+  memcpy(tree_encoding, buf_tree, nnodes);
   tree_encoding[nnodes] = '\0';
+  memcpy(tree_encoding + nnodes + 1, buf_leaves, sizeof(char) * nchars);
   
   free(buf_tree);
   free(buf_leaves);
@@ -200,33 +187,39 @@ void compress(const char *path) {
     exit(EXIT_FAILURE);
   }
 
-  CharFreq* frequencies = calculate_freq(file_content, len);
+  CharFreq frequencies[CHARS];
+  create_frequencies(frequencies);
+  calculate_freq(file_content, len, frequencies);
 
   int encoded_len, reduced_len, tree_len;
   BTree huffman_tree = create_huff_tree(frequencies, CHARS);
 
-  char** chars_encoding = encode_chars(huffman_tree);
-  char* encoded_text = encode_text(file_content, chars_encoding, huffman_tree, &encoded_len);
+  // Max len of a character codification is the height of the tree
+  // (+ 1 to count '\0')
+  int max_char_len = btree_height(huffman_tree) + 1;
+
+  char* chars_encoding[CHARS];
+  encode_chars(huffman_tree, chars_encoding, max_char_len);
+  char* encoded_text = encode_text(file_content, chars_encoding, len,
+                                    max_char_len, &encoded_len);
   char* encoded_tree = encode_tree(huffman_tree, CHARS, &tree_len);
-  
+
   char* reduced_encoding = implode(encoded_text, encoded_len, &reduced_len);
   char* path_hf = add_suffix(path, ".hf");
   char* path_tree = add_suffix(path, ".tree");
   
-  printf("%s\n", path_hf);
-
   writefile(path_hf, reduced_encoding, reduced_len);
   writefile(path_tree, encoded_tree, tree_len);
   
   free(file_content);
-  free_frequencies(frequencies, CHARS);
   free(encoded_text);
   free(encoded_tree);
   free(reduced_encoding);
   free(path_hf);
   free(path_tree);
-  for (int i = 0; i < CHARS; i++)
+  for (int i = 0; i < CHARS; i++) {
+    free(frequencies[i]);
     free(chars_encoding[i]);
-  free(chars_encoding);
+  }
   btree_destroy(huffman_tree, free);
 }

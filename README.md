@@ -5,6 +5,7 @@ Huffman encodings.
 
 ## Build
 To build the program:
+
 ```
 $ make
 ```

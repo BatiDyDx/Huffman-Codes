@@ -141,7 +141,7 @@ void usage(void) {
 char* add_suffix(const char* path, const char* ext){
 	// Agregamos un +1 para agregar el caracter '\0'
 	char* new_path = malloc(sizeof(char) * (strlen(path) + strlen(ext) + 1));
-	strcat(new_path, path);
+	strcpy(new_path, path); // strcat: str1 str2
 	strcat(new_path, ext);
 	return new_path;
 }
@@ -154,7 +154,8 @@ char* replace_suffix(const char* path, const char* new_ext, unsigned old_ext_len
 	char* new_path = malloc(sizeof(char) * new_path_len);
 	assert(new_path != NULL);
 
-	strncat(new_path, path, strlen(path) - old_ext_len);
+	memcpy(new_path, path, strlen(path) - old_ext_len);
+	new_path[strlen(path) - old_ext_len] = '\0';
 	strcat(new_path, new_ext);
 	return new_path;
 }

@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define MAX(X, Y) (X > Y ? X : Y)
+
 /*
 Function that returns a pointer to a copy of data
 */

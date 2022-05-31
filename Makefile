@@ -2,7 +2,7 @@
 
 # Compiler and flags
 CC = gcc
-FLAGS = -Wall -Wextra -Werror -std=c99
+CFLAGS = -Wall -Wextra -Werror -std=c99
 
 # Source files
 MAIN = src/main
@@ -10,28 +10,28 @@ COMPRESSOR = src/comp
 DECOMPRESSOR = src/decomp
 IO = src/io
 BTREE = structures/btree
-GLIST = structures/glist
 SGLIST = structures/sglist
 
 SOURCE = $(COMPRESSOR).o $(DECOMPRESSOR).o $(IO).o
-STRUCTURES = $(BTREE).o $(GLIST).o $(SGLIST).o
+STRUCTURES = $(BTREE).o $(SGLIST).o
 TESTS = tests/main.c tests/test_comp.c tests/test_decomp.c
 
 # Build the programme
 all: $(MAIN).o $(SOURCE) $(STRUCTURES)
-	$(CC) $(FLAGS) -o huff $^
+	$(CC) $(CFLAGS) -o huff $^
 
 # Create .o files from .c source files
 %.o: %.c
-	$(CC) -c $(FLAGS) $^ -o $@
+	$(CC) -c $(CFLAGS) $^ -o $@
 
 # Compile source files with debug information
 .PHONY: debug
 debug:
-	gcc -g -o huff $(FLAGS) $(MAIN).c $(COMPRESSOR).c $(DECOMPRESSOR).c $(IO).c $(BTREE).c $(GLIST).c $(SGLIST).c
+	$(CC) -g -fsanitize=address -o huff $(CFLAGS) $(MAIN).c $(COMPRESSOR).c \
+	$(DECOMPRESSOR).c $(IO).c $(BTREE).c $(SGLIST).c
 
 tests: $(SOURCE) $(STRUCTURES)
-	$(CC) $(FLAGS) -o huff_tests $^ $(TESTS)
+	$(CC) $(CFLAGS) -o huff_tests $^ $(TESTS)
 
 # Clean .o files, debug folder and executables
 .PHONY: clean

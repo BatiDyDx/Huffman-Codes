@@ -16,40 +16,11 @@ struct _CharFreq {
 typedef struct _CharFreq *CharFreq;
 
 /*
-Returns a negative integer if the frequency from the first structure
-is less than the frequency in the second one, 0 if ther are equal, or
-a positive integer otherwise
-*/
-int compare_freq(CharFreq ch1, CharFreq ch2);
-
-/*
-Sorts an array of CharFreq structures by its frequency field,
-using the quick sort algorithm
-*/
-void sort_freq(CharFreq *freq_array, int len);
-
-/*
- **
- */
-void compress(const char *filename);
-
-/*
-* Returns an array of CharFreq, each element
-* corresponds to a char with its frequency set to 0
-*/
-CharFreq* create_frequencies();
-
-/*
-Frees the array of CharFreq
-*/
-void free_frequencies(CharFreq* frequencies, size_t len);
-
-/*
 Returns an array of CharFreq where every element
 corresponds to a structure containing a character
 and the number of times it appears in string passed
 */
-CharFreq* calculate_freq(char* str, int len);
+void calculate_freq(char* str, int len, CharFreq frequencies[CHARS]);
 
 /*
 Given an array of CharFreq, it creates the huffman
@@ -58,8 +29,11 @@ file to be compressed.
 */
 BTree create_huff_tree(CharFreq* frequencies, size_t nchars);
 
+void encode_chars(BTree huff_tree, char* chars_encoding[CHARS],
+                    int max_char_len);
 
-char* encode_text(char* text, char** chars_encoding, BTree huff_tree, int* len);
+char* encode_text(char* text, char** chars_encoding, size_t text_len,
+                    int max_char_len, int* len);
 
 /**/
 char* encode_tree(BTree huffman_tree, size_t nchars, int* encode_tree);
