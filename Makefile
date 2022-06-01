@@ -31,7 +31,8 @@ debug:
 	$(DECOMPRESSOR).c $(IO).c $(BTREE).c $(SGLIST).c
 
 tests: $(SOURCE) $(STRUCTURES)
-	$(CC) $(CFLAGS) -o huff_tests $^ $(TESTS)
+	$(CC) $(CFLAGS) -o huff_tests $^ tests/main.c
+# Añadir $(TESTS)
 
 # Clean .o files, debug folder and executables
 .PHONY: clean

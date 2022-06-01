@@ -5,11 +5,11 @@
 
 void test_create_frequencies() {
     CharFreq* array = create_frequencies();
-    for (int i = 0; i < CHARS; i++) {
+    for (int i = 0; i < NCHARS; i++) {
         assert(array[i]->freq == 0);
         assert(array[i]->c == (UChar) i);
     }
-    free_frequencies(array, CHARS);
+    free_frequencies(array, NCHARS);
 }
 
 void test_calculate_freq() {
@@ -25,7 +25,7 @@ void test_calculate_freq() {
     assert(frequencies[(UChar) 'e']->freq == 5);
     assert(frequencies[(UChar) EOF]->freq == 0);
 
-    free_frequencies(frequencies, CHARS);
+    free_frequencies(frequencies, NCHARS);
 }
 
 void test_sort_freq() {

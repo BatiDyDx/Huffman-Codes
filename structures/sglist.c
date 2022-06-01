@@ -24,15 +24,22 @@ SGList sglist_append_start(SGList list, void *data, CopyFunction copy) {
 
 SGList sglist_insert(SGList list, void *data, CopyFunction copy,
                       CompareFunction cmp) {
-  if (sglist_empty(list) || cmp(data, list->data) < 0)
+  if (sglist_empty(list) || cmp(data, list->data) <= 0)
     list = sglist_append_start(list, data, copy);
   else {
     SGList node;
-	int stop = 0;
+    int stop = 0;
     for (node = list; !stop && node->next != NULL; node = node->next)
-      if (cmp(data, node->next->data) < 0)
+      if (cmp(data, node->next->data) <= 0)
         stop = 1;
     node->next = sglist_append_start(node->next, data, copy);
   }
   return list;
+}
+
+void sglist_iter(SGList list, void (*visit)(void*)) {
+  while (!sglist_empty(list)) {
+    visit(list->data);
+    list = list->next;
+  }
 }

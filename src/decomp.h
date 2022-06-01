@@ -17,14 +17,14 @@ BTree tree_from_encoding(char* encoded_tree);
  * almacenar la longitud del texto decodificado. Retorna un puntero a la
  * cadena decodificada.
 */
-char* decode_text(BTree root, char* encoded_text, const int encoded_len,
+char* decode_text(BTree root, char* encoded_text, int encoded_len,
                     int* decode_len);
 
 /*
- * Dado un archivo f.hf, lo descomprime a partir de su codificación de Huffman.
- * Para esto, el archivo f.tree, el cual contiene la codificación del arbol
- * necesario para la descompresión, debe estar presente en el directorio.
+ * 
+ * 
+ * 
 */
-void decompress(const char* path);
+void decompress(const char* hf_path, char* tree_path, char* dec_path);
 
 #endif /* __DECOMP_H__ */

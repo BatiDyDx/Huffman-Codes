@@ -4,7 +4,7 @@
 #include "../structures/btree.h"
 #include "../structures/sglist.h"
 
-#define CHARS 256
+#define NCHARS 256
 
 typedef unsigned char UChar;
 
@@ -16,20 +16,25 @@ struct _CharFreq {
 typedef struct _CharFreq *CharFreq;
 
 /*
-Returns an array of CharFreq where every element
-corresponds to a structure containing a character
-and the number of times it appears in string passed
+TODO: remover
 */
-void calculate_freq(char* str, int len, CharFreq frequencies[CHARS]);
+SGList create_nodes(CharFreq* frequencies, size_t len);
+
+void create_frequencies(CharFreq buf[NCHARS]);
 
 /*
-Given an array of CharFreq, it creates the huffman
-tree corresponding to the frequency of the characters in the
-file to be compressed.
+Llena el buffer de frequencias con las frequencias de cada
+caracter en str. El buffer ya debe estar inicializado.
 */
-BTree create_huff_tree(CharFreq* frequencies, size_t nchars);
+void calculate_freq(char* str, int len, CharFreq frequencies[NCHARS]);
 
-void encode_chars(BTree huff_tree, char* chars_encoding[CHARS],
+/*
+Dado un arreglo de frecuencias ya computadas en un texto, crea el arbol
+de Huffman para la codificacion de dichos caracteres.
+*/
+BTree create_huff_tree(CharFreq* frequencies, int nchars);
+
+void encode_chars(BTree huff_tree, char* chars_encoding[NCHARS],
                     int max_char_len);
 
 char* encode_text(char* text, char** chars_encoding, size_t text_len,
@@ -43,6 +48,6 @@ Takes a path to a file to be compressed using Huffman
 algorithm, and writes the result to the file path.hf, and the
 corresponding tree used to encode it to the file path.hf.tree
 */
-void compress(const char *path);
+void compress(const char *path, char *hf_path, char *tree_path);
 
 #endif /* __COMP_H__ */

@@ -2,7 +2,7 @@
 #include "io.h"
 #include <assert.h>
 
-static void null(void* __attribute__((unused)) p) { return; }
+static void null(void* __attribute__((unused)) p) { (void) p; return; }
 
 BTree deserialize_tree(char** encoded_tree, char** encoded_values) {
     BTree node = btree_join(NULL, NULL, NULL);
@@ -30,7 +30,6 @@ BTree deserialize_tree(char** encoded_tree, char** encoded_values) {
 
 BTree tree_from_encoding(char* encoded_tree) {
     assert(encoded_tree != NULL);
-    // Chequear que no es el caracter nulo unicamente
     assert(*encoded_tree);
 
     char* encoded_values = encoded_tree;
@@ -40,7 +39,7 @@ BTree tree_from_encoding(char* encoded_tree) {
     return deserialize_tree(&encoded_tree, &encoded_values);
 }
 
-char* decode_text(BTree root, char* encoded_text, const int encoded_len,
+char* decode_text(BTree root, char* encoded_text, int encoded_len,
                     int* decode_len) {
 
     size_t nchar = 0;
@@ -77,32 +76,28 @@ char* decode_text(BTree root, char* encoded_text, const int encoded_len,
             node = root;
         }
     }
-    // Guardamos la longitud del texto decodificado
+
     *decode_len = nchar;
     return decoded_text;
 }
 
-void decompress(const char* path) {
+void decompress(const char* hf_path, char* tree_path, char* dec_path) {
     int encode_len, encode_bin_len, tree_encode_len, decode_len;
-    char* tree_path = replace_ext(path, ".tree", 3); // len(".hf") = 3
 
-    char* encoded_text = readfile(path, &encode_len);
+    char* encoded_text = readfile(hf_path, &encode_len);
     char* encoded_text_bin = explode(encoded_text, encode_len, &encode_bin_len);
 
     char* encoded_tree = readfile(tree_path, &tree_encode_len);
-
     BTree huff_tree = tree_from_encoding(encoded_tree);
 
     char* decoded_text = decode_text(huff_tree, encoded_text_bin,
                                     encode_bin_len, &decode_len);
-    char* decoded_path = replace_ext(path, ".dec", 3);
 
-    writefile(decoded_path, decoded_text, decode_len);
+    writefile(dec_path, decoded_text, decode_len);
 
     free(decoded_text);
     free(encoded_text);
     free(encoded_text_bin);
     free(encoded_tree);
-    free(tree_path);
     btree_destroy(huff_tree, null);
 }

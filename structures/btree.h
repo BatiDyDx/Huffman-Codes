@@ -36,7 +36,7 @@ int btree_empty(BTree tree);
 ** Creates a new tree, with the data given in the root node, and the subtrees
 ** given on the left and right
 */
-BTree btree_join(void* data, BTree left, BTree right);
+BTree btree_join(void* data, BTree left, BTree right, CopyFunction copy);
 
 /*
 ** Visits all nodes in the tree applying the visit function,
