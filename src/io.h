@@ -32,18 +32,19 @@ char* implode(char* bits, int len, int* nlen);
 char* explode(char* buf, int len, int* nlen);
 
 /*
- *  Prints the usage message of the programme to stdout and exits
+ * Imprime el mensaje de uso del programa y termina con codigo de error
  */
 void usage(void);
 
 /**
- * Agrega un sufijo al al path pasado
+ * Agrega una extension al path pasado
  */
-char* add_suffix(const char* path, const char* ext);
+char* add_ext(const char* path, const char* ext);
 
 /*
-
+ * Reemplaza la extension de path por una nueva dada. Se debe proveer
+ * la longitud de la extension a ser reemplazada
 */
-char* replace_suffix(const char* path, const char* new_ext, unsigned old_ext_len);
+char* replace_ext(const char* path, const char* ext, unsigned old_ext_len);
 
 #endif

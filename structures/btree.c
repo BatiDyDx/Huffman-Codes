@@ -57,11 +57,14 @@ int btree_nnodes(BTree tree) {
 	return btree_nnodes(tree->left) + btree_nnodes(tree->right) + 1;
 }
 
-
 int btree_height(BTree tree) {
 	if (btree_empty(tree))
 		return -1;
+
 	if (btree_leaf(tree))
 		return 0;
-	return MAX(btree_height(tree->left), btree_height(tree->right)) + 1;
+	
+	int height_left = btree_height(tree->left);
+	int height_right = btree_height(tree->right);
+	return max(height_left, height_right) + 1;
 }

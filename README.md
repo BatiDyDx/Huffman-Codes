@@ -11,8 +11,8 @@ $ make
 ```
 or
 ```
-gcc -Wall -Wextra -Werror -std=c99 src/comp.c src/decomp.o src/io.o
-src/main.c structures/btree.c structures/glist.c structures/sglist.c -o huff
+gcc -Wall -Wextra -Werror -std=c99 src/comp.c src/decomp.c src/io.c
+src/main.c structures/btree.c structures/sglist.c -o huff
 ```
 
 ## Compress text
