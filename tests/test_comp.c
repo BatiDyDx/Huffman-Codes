@@ -1,13 +1,15 @@
 #include "test_comp.h"
 #include <string.h>
 #include <assert.h>
+#include <stdio.h>
 
 static inline void* id(void* p) { return p; }
+
 
 void test_calculate_freq() {
     char* str = "Esto es una cadena de prueba para testing";
 
-    int len = strlen(str);
+    int len = strlen(str) + 1;
     CharFreq frequencies[NCHARS];
     create_frequencies(frequencies, NCHARS);
     calculate_freq(str, len, frequencies);
@@ -36,29 +38,30 @@ void test_sort_freq() {
     (\0,1), (d,1), (g,1), (H,1), (i,1), (l,1), (n,1), (p,1), (f, 2)
     (m,2), (n,2), (r,2), (u,2), (o,3), (s,3), (t,3), (a,4), (e,5), (" ", 7)
     */
-    size_t len = strlen(str) + 1; // Incluimos '\0' tambien
-    CharFreq frequencies[len];
-    create_frequencies(frequencies, NCHARS);
-    calculate_freq(str, strlen(str), frequencies);
+    int len = strlen(str) + 1; // Incluimos '\0' tambien
+    CharFreq freqs[NCHARS];
+    create_frequencies(freqs, NCHARS);
+    calculate_freq(str, len, freqs);
+    sort_freq(freqs, NCHARS);
+
     CharFreq cpy_frequencies[len];
     create_frequencies(cpy_frequencies, NCHARS);
-    calculate_freq(str, strlen(str), cpy_frequencies);
-    sort_freq(frequencies, len);
+    calculate_freq(str, len, cpy_frequencies);
     
     // Los caracteres que tengan mayor frecuencia quedaran al final de 
     // nuestro array de frecuencias ordenado
 
     //En frequencies[255] tenemos (" ", 7) y en cpy_frequencies[255] (ÿ, 0)
-    assert(frequencies[255]->freq > cpy_frequencies[255]->freq);
+    assert(freqs[255]->freq > cpy_frequencies[255]->freq);
 
     // En frequencies[253] tenemos (a,4) y en cpy_frequencies[253] (ý,0)
-    assert(frequencies[253]->freq > cpy_frequencies[253]->freq);
+    assert(freqs[253]->freq > cpy_frequencies[253]->freq);
 
     // En frequencies[249] tenemos (u,2) y en cpy_frequencies[253] (ù,0)
-    assert(frequencies[249]->freq > cpy_frequencies[249]->freq);
+    assert(freqs[249]->freq > cpy_frequencies[249]->freq);
 
     // En frequencies[246] tenemos (m,2) y en cpy_frequencies[246] (ö,0)
-    assert(frequencies[246]->freq > cpy_frequencies[249]->freq);
+    assert(freqs[246]->freq > cpy_frequencies[249]->freq);
 }
 
 void test_compare_node_frequencies() {
@@ -73,12 +76,12 @@ void test_compare_node_frequencies() {
 
     assert(compare_nodes_freq(tree1, tree2) == -7);
 
-    // freq1->freq = 10;
-    // freq2->freq = 4;
-    // assert(compare_nodes_freq(tree1, tree2) == 6);
+    freq1->freq = 10;
+    freq2->freq = 4;
+    assert(compare_nodes_freq(tree1, tree2) == 6);
 
-    // freq2->freq = 10;
-    // assert(compare_nodes_freq(tree1, tree2) == 0);
+    freq2->freq = 10;
+    assert(compare_nodes_freq(tree1, tree2) == 0);
 
     free(tree1);
     free(tree1);
@@ -104,42 +107,42 @@ SGList create_test_list(CharFreq* frequencies){
     return test_list;
 }
 
-void test_create_nodes_from_array() {
+// void test_create_nodes_from_array() {
 
-    // Nuestra cadena de prueba será "aabbbcdddd"
+//     // Nuestra cadena de prueba será "aabbbcdddd"
 
-    CharFreq frequencies[4];
-    CharFreq frq1 = malloc(sizeof(CharFreq));
-    CharFreq frq2 = malloc(sizeof(CharFreq));
-    CharFreq frq3 = malloc(sizeof(CharFreq));
-    CharFreq frq4 = malloc(sizeof(CharFreq));
-    frq1->c = 'a';
-    frq1->freq = 2;
-    frq2->c = 'b';
-    frq2->freq = 3;
-    frq3->c = 'c';
-    frq3->freq = 1;
-    frq4->c = 'd';
-    frq4->freq = 4;
-    frequencies[0] = frq1;
-    frequencies[1] = frq2;
-    frequencies[2] = frq3;
-    frequencies[3] = frq4;
+//     CharFreq frequencies[4];
+//     CharFreq frq1 = malloc(sizeof(CharFreq));
+//     CharFreq frq2 = malloc(sizeof(CharFreq));
+//     CharFreq frq3 = malloc(sizeof(CharFreq));
+//     CharFreq frq4 = malloc(sizeof(CharFreq));
+//     frq1->c = 'a';
+//     frq1->freq = 2;
+//     frq2->c = 'b';
+//     frq2->freq = 3;
+//     frq3->c = 'c';
+//     frq3->freq = 1;
+//     frq4->c = 'd';
+//     frq4->freq = 4;
+//     frequencies[0] = frq1;
+//     frequencies[1] = frq2;
+//     frequencies[2] = frq3;
+//     frequencies[3] = frq4;
 
-    SGList test_list1 = create_test_list(frequencies);
-    SGList test_list2 = create_nodes_from_array(frequencies, 4);
+//     SGList test_list1 = create_test_list(frequencies);
+//     SGList test_list2 = create_nodes_from_array(frequencies, 4);
 
-    assert(((CharFreq)(test_list1->data))->freq == ((CharFreq)(test_list2->data))->freq);
+//     assert(((CharFreq)(test_list1->data))->freq == ((CharFreq)(test_list2->data))->freq);
     
-    assert(((CharFreq)(test_list1->next->data))->freq == 
-    ((CharFreq)(test_list2->next->data))->freq);
+//     assert(((CharFreq)(test_list1->next->data))->freq == 
+//     ((CharFreq)(test_list2->next->data))->freq);
     
-    assert(((CharFreq)(test_list1->next->next->data))->freq == 
-    ((CharFreq)(test_list2->next->next->data))->freq);
+//     assert(((CharFreq)(test_list1->next->next->data))->freq == 
+//     ((CharFreq)(test_list2->next->next->data))->freq);
 
-    sglist_free(test_list1, free);
-    sglist_free(test_list2, free);
-}
+//     sglist_free(test_list1, free);
+//     sglist_free(test_list2, free);
+// }
 
 // void test_serialize_tree_and_nodes() {
 
@@ -194,9 +197,9 @@ void test_encode_tree() {
 
 void run_comp_tests() {
     test_calculate_freq();
-    // test_sort_freq();
-    // test_create_nodes_from_array();
-    // test_compare_node_frequencies();
+    test_sort_freq();
+    //test_create_nodes_from_array();
+    //test_compare_node_frequencies();
     // test_encode_tree();
     //test_create_huff_tree();
 }
