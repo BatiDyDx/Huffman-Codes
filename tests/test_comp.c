@@ -2,6 +2,8 @@
 #include <string.h>
 #include <assert.h>
 
+static inline void* id(void* p) { return p; }
+
 void test_calculate_freq() {
     char* str = "Esto es una cadena de prueba para testing";
 
@@ -87,16 +89,16 @@ SGList create_test_list(CharFreq* frequencies){
     SGList test_list = sglist_init();
     BTree tmp;
 
-    tmp = btree_join(copy_charfreq(frequencies[3]), NULL, NULL, (CopyFunction) btree_copy);
+    tmp = btree_join(frequencies[3], NULL, NULL, (CopyFunction) id);
     test_list = sglist_insert(test_list, tmp, id, (CompareFunction)compare_nodes_freq);
 
-    tmp = btree_join(copy_charfreq(frequencies[1]), NULL, NULL, (CopyFunction) btree_copy);
+    tmp = btree_join(frequencies[1], NULL, NULL, (CopyFunction) id);
     test_list = sglist_insert(test_list, tmp, id, (CompareFunction)compare_nodes_freq);
 
-    tmp = btree_join(copy_charfreq(frequencies[0]), NULL, NULL, (CopyFunction) btree_copy);
+    tmp = btree_join(frequencies[0], NULL, NULL, (CopyFunction) id);
     test_list = sglist_insert(test_list, tmp, id, (CompareFunction)compare_nodes_freq);
 
-    tmp = btree_join(copy_charfreq(frequencies[2]), NULL, NULL, (CopyFunction) btree_copy);
+    tmp = btree_join(frequencies[2], NULL, NULL, (CopyFunction) id);
     test_list = sglist_insert(test_list, tmp, id, (CompareFunction)compare_nodes_freq);
 
     return test_list;
