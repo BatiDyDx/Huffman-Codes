@@ -6,7 +6,7 @@
 
 void* id(void* data) { return data; }
 
-static int compare_freq(CharFreq* ch1, CharFreq* ch2) {
+int compare_freq(CharFreq* ch1, CharFreq* ch2) {
   return (*ch1)->freq - (*ch2)->freq;
 }
 
@@ -15,7 +15,7 @@ void sort_freq(CharFreq* freq_array, int len) {
       (int (*)(const void*, const void*))compare_freq);
 }
 
-static CharFreq copy_charfreq(CharFreq ch) {
+CharFreq copy_charfreq(CharFreq ch) {
   CharFreq copy = malloc(sizeof(struct _CharFreq));
   assert(copy != NULL);
   copy->c = ch->c;
@@ -23,11 +23,11 @@ static CharFreq copy_charfreq(CharFreq ch) {
   return copy;
 }
 
-void create_frequencies(CharFreq buf[CHARS]) {
+void create_frequencies(CharFreq* buf, int len) {
   CharFreq temp;
   // char* archivo;
   // Incializa el array, con todas las frecuencias en 0
-  for (int i = 0; i < CHARS; i++) {
+  for (int i = 0; i < len; i++) {
     temp = malloc(sizeof(struct _CharFreq));
     assert(temp != NULL);
     temp->c = (UChar) i;
@@ -41,7 +41,7 @@ void calculate_freq(char* str, int len, CharFreq frequencies[CHARS]) {
     frequencies[(UChar) str[j]]->freq++;
 }
 
-static int compare_nodes_freq(BTree node1, BTree node2) {
+int compare_nodes_freq(BTree node1, BTree node2) {
   return compare_freq((CharFreq*)&node1->data, (CharFreq*)&node2->data);
 }
 
@@ -57,7 +57,7 @@ SGList create_nodes_from_array(CharFreq* frequencies, size_t len) {
   return nodes;
 }
 
-static void serialize_tree_and_nodes(BTree root, char* tree_repr, size_t *nnode, 
+void serialize_tree_and_nodes(BTree root, char* tree_repr, size_t *nnode, 
                                      char* buf_leaves, size_t *nleaf) {
   if (btree_empty(root))
     return ;
@@ -123,7 +123,7 @@ char* encode_text(char* text, char** chars_encoding, size_t text_len,
 }
 
 // Iterate over the huffman tree to get each character codification in binary
-static void char_code_from_tree(BTree root, char** chars_encoding,
+void char_code_from_tree(BTree root, char** chars_encoding,
                                 char* encoding, size_t depth) {
   // If the tree is a leaf, store the path in chars_encoding
   if (btree_leaf(root)) {
@@ -188,7 +188,7 @@ void compress(const char *path) {
   }
 
   CharFreq frequencies[CHARS];
-  create_frequencies(frequencies);
+  create_frequencies(frequencies, CHARS);
   calculate_freq(file_content, len, frequencies);
 
   int encoded_len, reduced_len, tree_len;

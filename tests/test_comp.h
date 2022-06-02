@@ -2,6 +2,7 @@
 #define __TEST_COMP_H__
 
 #include "../src/comp.h"
+#include <string.h>
 
 /*
 * Run tests for the compressor

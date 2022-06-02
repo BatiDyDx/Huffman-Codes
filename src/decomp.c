@@ -2,7 +2,7 @@
 #include "io.h"
 #include <assert.h>
 
-void null(void* __attribute((unused))p) { return; }
+void null(void* p) { return (void)p; }
 
 BTree deserialize_tree(char** encoded_tree, char** encoded_values) {
     BTree node = btree_join(NULL, NULL, NULL);
