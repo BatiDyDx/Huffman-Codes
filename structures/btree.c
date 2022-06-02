@@ -13,10 +13,10 @@ void btree_destroy(BTree tree, DestroyFunction destroy) {
 
 int btree_empty(BTree tree) { return tree == NULL; }
 
-BTree btree_join(void* data, BTree left, BTree right) {
+BTree btree_join(void* data, BTree left, BTree right, CopyFunction copy) {
 	BTree new_node = malloc(sizeof(struct _BTNode));
 	assert(new_node != NULL);
-	new_node->data = data;
+	new_node->data = copy(data);
 	new_node->left = left;
 	new_node->right = right;
 	return new_node;
@@ -57,11 +57,14 @@ int btree_nnodes(BTree tree) {
 	return btree_nnodes(tree->left) + btree_nnodes(tree->right) + 1;
 }
 
-
 int btree_height(BTree tree) {
 	if (btree_empty(tree))
 		return -1;
+
 	if (btree_leaf(tree))
 		return 0;
-	return MAX(btree_height(tree->left), btree_height(tree->right)) + 1;
+	
+	int height_left = btree_height(tree->left);
+	int height_right = btree_height(tree->right);
+	return max(height_left, height_right) + 1;
 }

@@ -17,11 +17,19 @@ int main(int argc, const char** argv) {
   path = argv[2];
   // Call corresponding compressing or decompressing functions
   if (strcmp(cmd, "C") == 0) {
-    compress(path);
-    printf("Compression succeeded");
+    char* hf_path = add_ext(path, ".hf");
+    char* tree_path = add_ext(path, ".tree");
+    compress(path, hf_path, tree_path);
+    free(hf_path);
+    free(tree_path);
+    printf("Compresion finalizada");
   } else if (strcmp(cmd, "D") == 0) {
-    decompress(path);
-    printf("Decompression succeeded");
+    char* tree_path = replace_ext(path, ".tree", 3); // len(".hf") = 3
+    char* decoded_path = replace_ext(path, ".dec", 3);
+    decompress(path, tree_path, decoded_path);
+    free(tree_path);
+    free(decoded_path);
+    printf("Descompresion finalizada");
   } else
     usage();
 

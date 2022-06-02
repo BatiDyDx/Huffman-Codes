@@ -4,7 +4,7 @@
 #include "../structures/btree.h"
 #include "../structures/sglist.h"
 
-#define CHARS 256
+#define NCHARS 256
 
 typedef unsigned char UChar;
 
@@ -49,7 +49,7 @@ void create_frequencies(CharFreq* buf, int len);
  * corresponde a la estructura, conteniendo un caracter y
  * el numero de veces que aparece en el string pasado.
  */
-void calculate_freq(char* str, int len, CharFreq frequencies[CHARS]);
+void calculate_freq(char* str, int len, CharFreq frequencies[NCHARS]);
 
 /**
  * Similar a compare_freq, solo que toma argumentos del
@@ -78,7 +78,7 @@ void serialize_tree_and_nodes(BTree root, char* tree_repr, size_t *nnode,
  * correspondiente a la frecuencia de caracteres en el archivo
  * a comprimir.
  */
-BTree create_huff_tree(CharFreq* frequencies, size_t nchars);
+BTree create_huff_tree(CharFreq* frequencies, int nchars);
 
 /**
  * Toma un arbol de huffman, 
@@ -100,6 +100,6 @@ Takes a path to a file to be compressed using Huffman
 algorithm, and writes the result to the file path.hf, and the
 corresponding tree used to encode it to the file path.hf.tree
 */
-void compress(const char *path);
+void compress(const char *path, char *hf_path, char *tree_path);
 
 #endif /* __COMP_H__ */

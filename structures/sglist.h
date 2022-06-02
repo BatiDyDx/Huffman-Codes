@@ -31,4 +31,7 @@ int sglist_empty(SGList list);
 */
 SGList sglist_insert(SGList list, void *data, CopyFunction copy, CompareFunction cmp);
 
+void sglist_iter(SGList list, void (*visit)(void*));
+
+
 #endif // __SGLIST_H__

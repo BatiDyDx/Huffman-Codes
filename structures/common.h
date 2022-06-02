@@ -5,7 +5,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define MAX(X, Y) (X > Y ? X : Y)
+static inline int max(int x, int y) {
+    return (x > y ? x : y);
+}
 
 /*
 Function that returns a pointer to a copy of data

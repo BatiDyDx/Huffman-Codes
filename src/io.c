@@ -138,7 +138,7 @@ void usage(void) {
 	exit(EXIT_FAILURE);
 }
 
-char* add_suffix(const char* path, const char* ext){
+char* add_ext(const char* path, const char* ext){
 	// Agregamos un +1 para agregar el caracter '\0'
 	char* new_path = malloc(sizeof(char) * (strlen(path) + strlen(ext) + 1));
 	strcpy(new_path, path); // strcat: str1 str2
@@ -146,7 +146,7 @@ char* add_suffix(const char* path, const char* ext){
 	return new_path;
 }
 
-char* replace_suffix(const char* path, const char* new_ext, unsigned old_ext_len) {
+char* replace_ext(const char* path, const char* new_ext, unsigned old_ext_len) {
 	// Por ejemplo, si se quiere reemplazar el sufijo .txt de por .c en
 	// "directorio/archivo.txt" se tendra "directorio/archivo.c", cuya longitud
 	// es len("directorio/archivo") + len(".c") - len(".txt") + 1 (para el '\0')
