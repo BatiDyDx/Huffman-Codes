@@ -30,58 +30,55 @@ void calculate_freq(char* str, int len, CharFreq frequencies[NCHARS]) {
     frequencies[(UChar) str[j]]->freq++;
 }
 
-inline int compare_nodes_freq(BTree node1, BTree node2) {
-  return compare_freq((CharFreq*) &(node1->data), (CharFreq*) &(node2->data));
+inline int compare_nodes_freq(BTree first_node, BTree second_node) {
+  return compare_freq((CharFreq*) &(first_node->data), (CharFreq*) &(second_node->data));
 }
 
 SGList create_nodes(CharFreq* frequencies, size_t len) {
   sort_freq(frequencies, len);
 
-  SGList nodes = sglist_init();
+  SGList nodes_list = sglist_init();
   // Dado que el arreglo esta ordenado, creamos la lista de atras para
   // adelante, insertando asi siempre en el primer lugar de la lista
   for (int i = len - 1; 0 <= i; i--) {
     BTree tmp = btree_join(frequencies[i], NULL, NULL, (CopyFunction) id);
-    nodes = sglist_insert(nodes, tmp, id, (CompareFunction)compare_nodes_freq);
+    nodes_list = sglist_insert(nodes_list, tmp, id, (CompareFunction)compare_nodes_freq);
   }
-  return nodes;
+  return nodes_list;
 }
 
 BTree create_huff_tree(CharFreq* frequencies, int nchars) {
-  // TODO: change variable names
-  // nodes refers to elements in the list, while
-  // node1 and node2 are of type BTree
-  SGList nodes = create_nodes(frequencies, nchars);
-  assert(nodes != NULL);
+  SGList nodes_list = create_nodes(frequencies, nchars);
+  assert(nodes_list != NULL);
   BTree huff_tree = btree_init();
   
-  while (nodes->next != NULL) {
-    BTree node1 = (BTree)nodes->data;
-    BTree node2 = (BTree)nodes->next->data;
+  while (nodes_list->next != NULL) {
+    BTree first_node = (BTree)nodes_list->data;
+    BTree second_node = (BTree)nodes_list->next->data;
 
     CharFreq new_freq = malloc(sizeof(struct _CharFreq));
     assert(new_freq != NULL);
 
     // The frequency of the parent is the sum of the frequencies of its children
-    new_freq->freq = ((CharFreq)(node1->data))->freq + 
-                     ((CharFreq)(node2->data))->freq ;
+    new_freq->freq = ((CharFreq)(first_node->data))->freq + 
+                     ((CharFreq)(second_node->data))->freq ;
 
     // new_freq->c se deja como basura, ya que no nos va a importar acceder a este
     // a menos que sea una hoja.
-    BTree parent_node = btree_join(new_freq, node1, node2, id);
+    BTree parent_node = btree_join(new_freq, first_node, second_node, id);
     
-    // Free the first two nodes, without freeing its data,
+    // Free the first two nodes_list, without freeing its data,
     // because the data is now referenced in parent_node
-    SGList temp = nodes->next->next;
-    free(nodes->next);
-    free(nodes);
+    SGList temp = nodes_list->next->next;
+    free(nodes_list->next);
+    free(nodes_list);
 
-    nodes = sglist_insert(temp, parent_node, id,
+    nodes_list = sglist_insert(temp, parent_node, id,
                           (CompareFunction)compare_nodes_freq);
   }
 
-  huff_tree = (BTree)nodes->data;
-  free(nodes); // La lista tiene un unico elemento
+  huff_tree = (BTree)nodes_list->data;
+  free(nodes_list); // La lista tiene un unico elemento
   return huff_tree;
 }
 

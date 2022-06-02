@@ -1,6 +1,0 @@
-[X] Write README.md
-[X] Test functions and structures
-[X] Implement compressor
-[X] Implement decompressor
-[X] Update headers
-[ ] Organize code (remove redundant includes, organize functions, add comments, etc)
