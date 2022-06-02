@@ -36,6 +36,6 @@ tests: $(SOURCE) $(STRUCTURES)
 # Clean .o files, debug folder and executables
 .PHONY: clean
 clean:
-	-rm -r *.dSYM
-	-rm src/*.o structures/*.o
-	-rm huff huff_tests
+	@-rm -r *.dSYM 2>/dev/null || true
+	@-rm src/*.o structures/*.o 2>/dev/null || true
+	@-rm huff huff_tests 2>/dev/null || true

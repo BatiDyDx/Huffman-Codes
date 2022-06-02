@@ -64,7 +64,6 @@ int compare_nodes_freq(BTree node1, BTree node2);
  */
 SGList create_nodes_from_array(CharFreq* frequencies, size_t len);
 
-
 /**
  * Toma un arbol de Huffman y codifica el arbol en una 
  * cadena de 0s y 1s. Escribe 0 si la raiz actual es un
