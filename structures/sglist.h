@@ -1,37 +1,33 @@
 #ifndef __SGLIST_H__
 #define __SGLIST_H__
 
-#include "common.h"
+#include "../common.h"
 
-// Sorted General List
+// Listas generales ordenadas
 typedef struct _SGNode {
     void* data;
     struct _SGNode* next;
 } *SGList;
 
-
 /*
-* Returns an empty list
+* Retorna una lista vacia
 */
 SGList sglist_init();
 
 /*
-* Destroys the list
+* Destruye la lista, liberando memoria
 */
 void sglist_free(SGList list, DestroyFunction destroy);
 
 /*
-* Returns whether the list is empty
+* Retorna si la lista es vacia
 */
 int sglist_empty(SGList list);
 
 /*
-* Inserts the given data in the list in sorted list, using the
-* criterion stablished by the cmp function.
+* Inserta el una copia del dato dado en la lista en la posicion indicada
+* segun la funcion de comparación
 */
 SGList sglist_insert(SGList list, void *data, CopyFunction copy, CompareFunction cmp);
-
-void sglist_iter(SGList list, void (*visit)(void*));
-
 
 #endif // __SGLIST_H__

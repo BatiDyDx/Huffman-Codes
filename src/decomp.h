@@ -1,6 +1,7 @@
 #ifndef __DECOMP_H__
 #define __DECOMP_H__
 
+#include "../common.h"
 #include "../structures/sglist.h"
 #include "../structures/btree.h"
 

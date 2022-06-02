@@ -2,19 +2,10 @@
 #include <string.h>
 #include <assert.h>
 
-
-void test_create_frequencies() {
-    CharFreq* array = create_frequencies();
-    for (int i = 0; i < NCHARS; i++) {
-        assert(array[i]->freq == 0);
-        assert(array[i]->c == (UChar) i);
-    }
-    free_frequencies(array, NCHARS);
-}
-
 void test_calculate_freq() {
     char* str = "Esto es una cadena de prueba para testing";
-    CharFreq* frequencies = calculate_freq(str, strlen(str) + 1);
+    CharFreq frequencies[NCHARS];
+    calculate_freq(str, strlen(str) + 1, frequencies);
 
     assert(frequencies[(UChar) '\0']->freq == 1);
     assert(frequencies[(UChar) 'o']->freq == 1);
@@ -23,9 +14,9 @@ void test_calculate_freq() {
     assert(frequencies[(UChar) ' ']->freq == 7);
     assert(frequencies[(UChar) 'a']->freq == 6);
     assert(frequencies[(UChar) 'e']->freq == 5);
-    assert(frequencies[(UChar) EOF]->freq == 0);
 
-    free_frequencies(frequencies, NCHARS);
+    for (int i = 0; i < NCHARS; i++)
+        free(frequencies[i]);
 }
 
 void test_sort_freq() {
@@ -63,7 +54,6 @@ void test_create_huff_tree() {
     assert(0);
 
     btree_destroy(root, free);
-    free_frequencies(char_freq_str, 20);
 }
 
 void test_encode_tree() {
@@ -78,7 +68,7 @@ void test_encode_tree() {
     }
 
     BTree huff_tree = create_huff_tree(frequencies, 5);
-    char* tree_encoding = encode_tree(huff_tree, 5, NULL);
+    char* tree_encoding = encode_tree(huff_tree, 5);
 
     assert(memcmp(tree_encoding, "010100111\0 !4c1", 16) == 0);
     
@@ -89,7 +79,6 @@ void test_encode_tree() {
 }
 
 void run_comp_tests() {
-    test_create_frequencies();
     test_calculate_freq();
     test_encode_tree();
     test_create_huff_tree();

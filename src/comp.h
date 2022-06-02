@@ -1,10 +1,9 @@
 #ifndef __COMP_H__
 #define __COMP_H__
 
+#include "../common.h"
 #include "../structures/btree.h"
 #include "../structures/sglist.h"
-
-#define NCHARS 256
 
 typedef unsigned char UChar;
 
@@ -16,10 +15,15 @@ struct _CharFreq {
 typedef struct _CharFreq *CharFreq;
 
 /*
-TODO: remover
+ * Retorna una SGList donde cada nodo contiene un puntero a un
+ * nodo BTree, que formará parte del arbol de la codificaciñon de Huffman.
 */
 SGList create_nodes(CharFreq* frequencies, size_t len);
 
+/*
+ * Inicializa el buffer pasado con estructuras CharFreq, cada elemento
+ * con su correspodiente caracter y frecuencia 0.
+*/
 void create_frequencies(CharFreq buf[NCHARS]);
 
 /*
@@ -34,19 +38,32 @@ de Huffman para la codificacion de dichos caracteres.
 */
 BTree create_huff_tree(CharFreq* frequencies, int nchars);
 
+/*
+ * Computa la cadena de 1s y 0s que codifica cada caracter dado el arbol
+ * como argumento, y lo almacena en el buffer. max_char_len será la
+ * longitud maxima usada para codificar un caracter (altura(arbol) + 1)
+*/
 void encode_chars(BTree huff_tree, char* chars_encoding[NCHARS],
                     int max_char_len);
 
+/*
+ * Dado una cadena de caracters y un buffer que almacena la representación
+ * de cada caracter, se codifica text en 1s y 0s. Toma un puntero para a int
+ * almacenar la longitud de la codificacion.
+*/
 char* encode_text(char* text, char** chars_encoding, size_t text_len,
                     int max_char_len, int* len);
 
-/**/
-char* encode_tree(BTree huffman_tree, size_t nchars, int* encode_tree);
+/*
+ * Devuelve la codificacion de un arbol de Huffman. El parametro nchars
+ * permite codificar arboles de distinta cantidad de hojas.
+*/
+char* encode_tree(BTree huffman_tree, size_t nchars);
 
 /*
-Takes a path to a file to be compressed using Huffman
-algorithm, and writes the result to the file path.hf, and the
-corresponding tree used to encode it to the file path.hf.tree
+ * Comprime el archivo dado por path usando el algoritmo de Huffman.
+ * El archivo descomprimido y el arbol codificado usado para la compresión
+ * son escritos en hf_path y tree_path respectivamente.
 */
 void compress(const char *path, char *hf_path, char *tree_path);
 

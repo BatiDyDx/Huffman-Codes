@@ -1,8 +1,7 @@
 #include "decomp.h"
 #include "io.h"
-#include <assert.h>
 
-static void null(void* __attribute__((unused)) p) { (void) p; return; }
+void null(void* p) { (void) p; return ; }
 
 BTree deserialize_tree(char** encoded_tree, char** encoded_values) {
     BTree node = btree_join(NULL, NULL, NULL);
@@ -16,7 +15,7 @@ BTree deserialize_tree(char** encoded_tree, char** encoded_values) {
         // Si es un 1, se lee de la cadena de valores de hojas y se avanza
         // el puntero al siguiente caracter. Se asigna el caracter al nodo
         case '1':
-            node->data = malloc(sizeof(char));
+            node->data = malloc(1); // 1 char
             assert(node->data != NULL);
             *((char*) node->data) = *(*encoded_values)++;
             break;
@@ -34,7 +33,7 @@ BTree tree_from_encoding(char* encoded_tree) {
 
     char* encoded_values = encoded_tree;
     // Avanzar hasta que comienzan los valores de las hojas
-    while (*encoded_values++);
+    for (int i = 0; i < NNODES; i++, encoded_values++);
 
     return deserialize_tree(&encoded_tree, &encoded_values);
 }
@@ -99,5 +98,5 @@ void decompress(const char* hf_path, char* tree_path, char* dec_path) {
     free(encoded_text);
     free(encoded_text_bin);
     free(encoded_tree);
-    btree_destroy(huff_tree, null);
+    btree_destroy(huff_tree, free);
 }
