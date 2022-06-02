@@ -1,5 +1,9 @@
 #include "btree.h"
 
+static inline int max(int x, int y) {
+    return (x > y ? x : y);
+}
+
 BTree btree_init() { return NULL; }
 
 void btree_destroy(BTree tree, DestroyFunction destroy) {
@@ -13,10 +17,10 @@ void btree_destroy(BTree tree, DestroyFunction destroy) {
 
 int btree_empty(BTree tree) { return tree == NULL; }
 
-BTree btree_join(void* data, BTree left, BTree right) {
+BTree btree_join(void* data, BTree left, BTree right, CopyFunction copy) {
 	BTree new_node = malloc(sizeof(struct _BTNode));
 	assert(new_node != NULL);
-	new_node->data = data;
+	new_node->data = copy(data);
 	new_node->left = left;
 	new_node->right = right;
 	return new_node;

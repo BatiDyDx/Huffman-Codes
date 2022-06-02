@@ -1,42 +1,43 @@
-# Huffman Compressor/Decompressor
+# Compresor Huffman
 
-This program is a C implementation of a text compressor for
-Huffman encodings.
+Este programa es una implementación en C de un compresor utilizando
+el algoritmo de codificación de Huffman.
 
 ## Build
-To build the program:
+Para compilar el programa:
 
 ```
 $ make
 ```
-or
+o
 ```
 gcc -Wall -Wextra -Werror -std=c99 src/comp.c src/decomp.c src/io.c
 src/main.c structures/btree.c structures/sglist.c -o huff
 ```
 
-## Compress text
-To compress text a text file, like f.txt:
+## Compresión
+Para comprimir un archivo dir/path:
 ```
-$ ./huff C f.txt
+$ ./huff C dir/path
 ```
 
-The encoded output will be stored in the file f.txt.hf, and
-the serialized tree for the decompression is stored in the file
-f.txt.tree
+La compresión se hará en el archivo dir/path.hf, y el arbol
+serializado necesario para la descompresión en el archivo dir/path.tree
 
-## Decompress text
-To decompress a text file, like f.txt.hf:
+## Descompresión
+Para descomprimir un archivo dir/path.hf
 ```
-$ ./huff C f.txt
+$ ./huff D dir/path.hf
 ```
-Note that f.txt.tree must be present for the decompression to
-be possible. The programme will output a file f.txt.dec with
-the original content of f.txt
+
+Notar que el archivo dir/path.tree debe estar presente en el directorio
+del archivo a descomprimir para que el proceso sea posible.
+
+El contenido descomprimido se almacenará en el archivo dir/path.dec
 
 ## Testing
 
-To compile and run tests:
+Para compilar y correr las pruebas:
 ```
 $ make tests && ./huff_tests
 ```

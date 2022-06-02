@@ -30,7 +30,7 @@ int btree_empty(BTree tree);
 ** Crea un nuevo arbol, con el dato dado en la raiz, y los arboles
 ** dados como argumentos como sus hijos
 */
-BTree btree_join(void* data, BTree left, BTree right);
+BTree btree_join(void* data, BTree left, BTree right, CopyFunction copy);
 
 /*
  * Retorna la altura del arbol

@@ -1,10 +1,10 @@
 #include "decomp.h"
 #include "io.h"
 
-void null(void* p) { (void) p; return ; }
+static inline void* id(void* p) { return p; }
 
 BTree deserialize_tree(char** encoded_tree, char** encoded_values) {
-    BTree node = btree_join(NULL, NULL, NULL);
+    BTree node = btree_join(NULL, NULL, NULL, (CopyFunction)id);
     // Leer de la secuencia de nodos y avanzar
     switch (*(*encoded_tree)++) {
         // Si es un 0, se crea un nodo y sus hijos se crean recursivamente

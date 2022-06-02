@@ -7,13 +7,6 @@
 #define NCHARS 256
 #define NNODES 511 // 2 * NCHARS - 1
 
-
-static inline void* id(void* p) { return p; }
-
-static inline int max(int x, int y) {
-    return (x > y ? x : y);
-}
-
 /*
  * Tipo de function que retorna un puntero a una copia del dato
 */
