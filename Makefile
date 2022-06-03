@@ -14,7 +14,7 @@ SGLIST = structures/sglist
 
 SOURCE = $(COMPRESSOR).o $(DECOMPRESSOR).o $(IO).o
 STRUCTURES = $(BTREE).o $(SGLIST).o
-TESTS = tests/main.c tests/test_comp.c tests/test_decomp.c
+TESTS = tests/main.c 
 
 # Compilar el programa
 all: $(MAIN).o $(SOURCE) $(STRUCTURES)
