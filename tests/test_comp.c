@@ -107,68 +107,56 @@ SGList create_test_list(CharFreq* frequencies){
     return test_list;
 }
 
-// void test_create_nodes_from_array() {
-
-//     // Nuestra cadena de prueba será "aabbbcdddd"
-
-//     CharFreq frequencies[4];
-//     CharFreq frq1 = malloc(sizeof(CharFreq));
-//     CharFreq frq2 = malloc(sizeof(CharFreq));
-//     CharFreq frq3 = malloc(sizeof(CharFreq));
-//     CharFreq frq4 = malloc(sizeof(CharFreq));
-//     frq1->c = 'a';
-//     frq1->freq = 2;
-//     frq2->c = 'b';
-//     frq2->freq = 3;
-//     frq3->c = 'c';
-//     frq3->freq = 1;
-//     frq4->c = 'd';
-//     frq4->freq = 4;
-//     frequencies[0] = frq1;
-//     frequencies[1] = frq2;
-//     frequencies[2] = frq3;
-//     frequencies[3] = frq4;
-
-//     SGList test_list1 = create_test_list(frequencies);
-//     SGList test_list2 = create_nodes_from_array(frequencies, 4);
-
-//     assert(((CharFreq)(test_list1->data))->freq == ((CharFreq)(test_list2->data))->freq);
-    
-//     assert(((CharFreq)(test_list1->next->data))->freq == 
-//     ((CharFreq)(test_list2->next->data))->freq);
-    
-//     assert(((CharFreq)(test_list1->next->next->data))->freq == 
-//     ((CharFreq)(test_list2->next->next->data))->freq);
-
-//     sglist_free(test_list1, free);
-//     sglist_free(test_list2, free);
-// }
 
 // void test_serialize_tree_and_nodes() {
 
 // }
 
-// void test_create_huff_tree() {
-//     // Cadena de prueba: "Ciencias de la computacion en la FCEIA"
-//     char chars_str[20] = {
-//                         'C', 'i', 'e', 'n', 'c', 'a', 's', 
-//                         ' ', 'd', 'l', 'o', 'm', 'p', 'u',
-//                         't', 'F', 'E', 'I', 'A', '\0'};
-//     size_t frequencies_str[20] = {
-//                         2, 2, 2, 3, 2, 4, 1,
-//                         6, 1, 2, 2, 1, 1, 1,
-//                         1, 1, 1, 1, 1, 1};
-//     CharFreq* char_freq_str = malloc(sizeof(CharFreq) * 20);
-//     assert(char_freq_str != NULL);
-//     for (int i = 0; i < 20; i++) {
-//         char_freq_str[i] = malloc(sizeof(struct _CharFreq));
-//         assert(char_freq_str[i] != NULL);
-//         char_freq_str[i]->c = (UChar) chars_str[i];
-//         char_freq_str[i]->freq = frequencies_str[i];
-//     }
-//     BTree root = create_huff_tree(char_freq_str, 20);
+// BTree create_test_btree(CharFreq* frequencies){
+//     CharFreq temp1, temp2;
+//     temp1->c = 'p';
+//     temp1->freq = (size_t) 1;
+//     temp2->c = 'm';
+//     temp2->freq = (size_t) 1;
+//     BTree test_tree1 = btree_join(temp1, NULL, NULL, (CopyFunction)id);
+//     BTree test_tree2 = btree_join(temp2, NULL, NULL, (CopyFunction)id);
+//     BTree raiz = btree_join()
 
-//     btree_destroy(root, free);
+
+// }
+
+// void test_create_huff_tree() {
+//     // Cadena de prueba: "licenciatura en ciencias de la computacion"
+//     char chars_str[43] = "licenciatura en ciencias de la computacion";
+//     CharFreq freqs[NCHARS];
+//     create_frequencies(freqs, NCHARS);
+//     calculate_freq(chars_str, 43, freqs);
+
+//     // Los frecuencias ordenadas de esta cadena son: 
+//     /* ('d', 1), ('m', 1), ('p', 1), ('r', 1), ('s', 1), ('l', 2), ('o', 2)
+//     ('t', 2), ('u', 2), ('e', 4), ('n', 4), ('a', 5), ('i', 5), (' ', 5), ('c', 6)*/
+
+//     /* Nuestro arbol de prueba quedara asi:
+//                            ( )
+//                     /                 \
+//                 ( )                          ()
+//               /       \                   /      \
+//              ( )         ( )             ()         ()
+//             /      \      /  \          /  \       /   \
+//            ()       ()  ('a') (' ')    ()   ('i') ('c') ()
+//            / \      /  \              /  \             /   \
+//         ('t')('o')()   ('u')       ('l')  ()         ('n') ('e')
+//                  / \                     /  \
+//                 ('s')  ('r')          ('d')  ()
+//                                             /  \
+//                                          ('p')  ('m')
+//     */
+//     BTree create_test_btree;
+
+//     BTree huff_tree_test = create_huff_tree(freqs, NCHARS);
+//     //BTree root = create_huff_tree(char_freq_str, 20);
+
+//     //btree_destroy(root, free);
 //     free(chars_str);
 // }
 
@@ -198,7 +186,7 @@ void test_encode_tree() {
 void run_comp_tests() {
     test_calculate_freq();
     test_sort_freq();
-    //test_create_nodes_from_array();
+    test_create_nodes_from_array();
     //test_compare_node_frequencies();
     // test_encode_tree();
     //test_create_huff_tree();
