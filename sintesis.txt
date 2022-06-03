@@ -1,0 +1,24 @@
+Trabajo Practico: Codificacion de Huffman
+
+El proceso de desarrollo de este trabajo practico consistió primero en
+proyectar la solucion al problema con la implementación mas óptima.
+
+Luego, realizamos algunos tests iniciales para ir probando las funciones basicas
+como el ordenamiento, creacion del arbol, etc.
+
+Una vez ya implementada gran parte del programa, comenzamos a comprimir
+distintos de archivos, probando distintos formatos y tamaños. A partir de esto,
+fuimos optimizando el programa para que funcione con archivo mas grandes, para
+que comprimiera y descomprimiera mas rápido, y solucionando problemas que
+surgian durante la codificacion del texto, o del arbol, y demás partes del
+programa.
+
+Hacemos uso del Makefile para facilitar el compilado del programa, para compilar
+los archivos de prueba y para compilar y depurar el programa.
+
+Usamos git y github para colaborar en conjunto en el programa e ir administrando
+las etapas del programa.
+
+Por ultimo, usamos el script en bash rcd.sh para automatizar el proceso de
+compresion y descompresion de varios archivos, facilitando el testeo a medida
+que el programa se editaba.

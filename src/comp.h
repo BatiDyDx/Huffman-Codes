@@ -101,6 +101,10 @@ char* encode_text(char* text, char** chars_encoding, size_t text_len,
 */
 char* encode_tree(BTree huffman_tree, size_t nchars);
 
+/*
+ * Toma un nodo, si el nodo es una hoja, copia el buffer encoding a
+ * la posicion del arreglo que le corresponde segun el caracter en la hoja
+*/
 void char_code_from_tree(BTree root, char** chars_encoding,
                                 char* encoding, size_t depth);                
 

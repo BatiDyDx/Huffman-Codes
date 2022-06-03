@@ -28,6 +28,7 @@ int sglist_empty(SGList list);
 * Inserta el una copia del dato dado en la lista en la posicion indicada
 * segun la funcion de comparación
 */
-SGList sglist_insert(SGList list, void *data, CopyFunction copy, CompareFunction cmp);
+SGList sglist_insert(SGList list, void *data, CopyFunction copy,
+                        CompareFunction cmp);
 
 #endif // __SGLIST_H__

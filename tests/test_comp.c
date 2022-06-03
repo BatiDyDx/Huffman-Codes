@@ -7,7 +7,7 @@ static inline void* id(void* p) { return p; }
 void test_calculate_freq() {
     char* str = "Esto es una cadena de prueba para testing";
 
-    int len = strlen(str);
+    int len = strlen(str) + 1;
     CharFreq frequencies[NCHARS];
     create_frequencies(frequencies, NCHARS);
     calculate_freq(str, len, frequencies);
@@ -61,44 +61,20 @@ void test_sort_freq() {
     assert(frequencies[246]->freq > cpy_frequencies[249]->freq);
 }
 
-void test_compare_node_frequencies() {
-
-    CharFreq freq1 = malloc(sizeof(CharFreq));
-    CharFreq freq2 = malloc(sizeof(CharFreq));
-    freq1->freq = 3;
-    freq2->freq = 10;
-    
-    BTree tree1 = btree_join(freq1, NULL, NULL, (CopyFunction) id);
-    BTree tree2 = btree_join(freq2, NULL, NULL, (CopyFunction) id);
-
-    assert(compare_nodes_freq(tree1, tree2) == -7);
-
-    // freq1->freq = 10;
-    // freq2->freq = 4;
-    // assert(compare_nodes_freq(tree1, tree2) == 6);
-
-    // freq2->freq = 10;
-    // assert(compare_nodes_freq(tree1, tree2) == 0);
-
-    free(tree1);
-    free(tree1);
-}
-
-SGList create_test_list(CharFreq* frequencies){
-    
+SGList aux_create_list(CharFreq frequencies[4]){
     SGList test_list = sglist_init();
     BTree tmp;
 
-    tmp = btree_join(frequencies[3], NULL, NULL, (CopyFunction) id);
+    tmp = btree_join(frequencies[0], NULL, NULL, (CopyFunction) id);
     test_list = sglist_insert(test_list, tmp, id, (CompareFunction)compare_nodes_freq);
-
+    
     tmp = btree_join(frequencies[1], NULL, NULL, (CopyFunction) id);
     test_list = sglist_insert(test_list, tmp, id, (CompareFunction)compare_nodes_freq);
 
-    tmp = btree_join(frequencies[0], NULL, NULL, (CopyFunction) id);
+    tmp = btree_join(frequencies[2], NULL, NULL, (CopyFunction) id);
     test_list = sglist_insert(test_list, tmp, id, (CompareFunction)compare_nodes_freq);
 
-    tmp = btree_join(frequencies[2], NULL, NULL, (CopyFunction) id);
+    tmp = btree_join(frequencies[3], NULL, NULL, (CopyFunction) id);
     test_list = sglist_insert(test_list, tmp, id, (CompareFunction)compare_nodes_freq);
 
     return test_list;
@@ -126,8 +102,8 @@ void test_create_nodes_from_array() {
     frequencies[2] = frq3;
     frequencies[3] = frq4;
 
-    SGList test_list1 = create_test_list(frequencies);
-    SGList test_list2 = create_nodes_from_array(frequencies, 4);
+    SGList test_list1 = aux_create_list(frequencies);
+    SGList test_list2 = create_nodes(frequencies, 4);
 
     assert(((CharFreq)(test_list1->data))->freq == ((CharFreq)(test_list2->data))->freq);
     
@@ -140,34 +116,6 @@ void test_create_nodes_from_array() {
     sglist_free(test_list1, free);
     sglist_free(test_list2, free);
 }
-
-// void test_serialize_tree_and_nodes() {
-
-// }
-
-// void test_create_huff_tree() {
-//     // Cadena de prueba: "Ciencias de la computacion en la FCEIA"
-//     char chars_str[20] = {
-//                         'C', 'i', 'e', 'n', 'c', 'a', 's', 
-//                         ' ', 'd', 'l', 'o', 'm', 'p', 'u',
-//                         't', 'F', 'E', 'I', 'A', '\0'};
-//     size_t frequencies_str[20] = {
-//                         2, 2, 2, 3, 2, 4, 1,
-//                         6, 1, 2, 2, 1, 1, 1,
-//                         1, 1, 1, 1, 1, 1};
-//     CharFreq* char_freq_str = malloc(sizeof(CharFreq) * 20);
-//     assert(char_freq_str != NULL);
-//     for (int i = 0; i < 20; i++) {
-//         char_freq_str[i] = malloc(sizeof(struct _CharFreq));
-//         assert(char_freq_str[i] != NULL);
-//         char_freq_str[i]->c = (UChar) chars_str[i];
-//         char_freq_str[i]->freq = frequencies_str[i];
-//     }
-//     BTree root = create_huff_tree(char_freq_str, 20);
-
-//     btree_destroy(root, free);
-//     free(chars_str);
-// }
 
 void test_encode_tree() {
     char test_chars[5] = {'c', '1', '4', ' ', '!'};
@@ -194,9 +142,7 @@ void test_encode_tree() {
 
 void run_comp_tests() {
     test_calculate_freq();
-    // test_sort_freq();
-    // test_create_nodes_from_array();
-    // test_compare_node_frequencies();
-    // test_encode_tree();
-    //test_create_huff_tree();
+    test_sort_freq();
+    test_create_nodes_from_array();
+    test_encode_tree();
 }

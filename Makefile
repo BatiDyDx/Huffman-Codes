@@ -1,10 +1,10 @@
-# Makefile for Huffman encoding and decoding programme
+# Makefile para compresor y descompresor Huffman
 
-# Compiler and flags
+# Compilador y banderas
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -std=c99
 
-# Source files
+# Archivos fuente
 MAIN = src/main
 COMPRESSOR = src/comp
 DECOMPRESSOR = src/decomp
@@ -16,15 +16,15 @@ SOURCE = $(COMPRESSOR).o $(DECOMPRESSOR).o $(IO).o
 STRUCTURES = $(BTREE).o $(SGLIST).o
 TESTS = tests/main.c tests/test_comp.c tests/test_decomp.c
 
-# Build the programme
+# Compilar el programa
 all: $(MAIN).o $(SOURCE) $(STRUCTURES)
 	$(CC) $(CFLAGS) -o huff $^
 
-# Create .o files from .c source files
+# Crear .o desde archivos .c
 %.o: %.c
 	$(CC) -c $(CFLAGS) $^ -o $@
 
-# Compile source files with debug information
+# Compilar para depuracion
 .PHONY: debug
 debug:
 	$(CC) -g -o huff $(CFLAGS) $(MAIN).c $(COMPRESSOR).c \
@@ -33,7 +33,7 @@ debug:
 tests: $(SOURCE) $(STRUCTURES)
 	$(CC) $(CFLAGS) -o huff_tests $^ $(TESTS)
 
-# Clean .o files, debug folder and executables
+# Remover archivos .o, ejecutables, etc
 .PHONY: clean
 clean:
 	@-rm -r *.dSYM 2>/dev/null || true
